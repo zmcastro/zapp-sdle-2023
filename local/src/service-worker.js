@@ -1,4 +1,5 @@
 import { build, files, version } from '$service-worker';
+import { get, set } from 'idb-keyval';
 
 const CACHE = `cache-${version}`;
 
@@ -30,7 +31,13 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
 	// ignore POST requests etc
-	if (event.request.method !== 'GET') return;
+	if (event.request.method !== 'GET') {
+		console.log('caught non-GET request');
+		set('hello', 'world')
+			.then(() => console.log('It worked!'))
+			.catch((err) => console.log('It failed!', err));
+		return;
+	}
 
 	async function respond() {
 		const url = new URL(event.request.url);
@@ -38,6 +45,7 @@ self.addEventListener('fetch', (event) => {
 
 		// `build`/`files` can always be served from the cache
 		if (ASSETS.includes(url.pathname)) {
+			console.log('cached asset');
 			return cache.match(url.pathname);
 		}
 
@@ -52,6 +60,7 @@ self.addEventListener('fetch', (event) => {
 
 			return response;
 		} catch {
+			console.log('offline');
 			return cache.match(event.request);
 		}
 	}
