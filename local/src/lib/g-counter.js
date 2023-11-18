@@ -8,6 +8,12 @@ export class GCounter {
         this.#map[id] = 0;
     }
 
+    // Set key
+    setKey(id) {
+        this.#id = id;
+        this.#map[this.#id] = 0;
+    }
+
     // Get map
     get() {
         const res = this.#map;

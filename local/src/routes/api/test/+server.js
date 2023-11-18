@@ -1,10 +1,12 @@
 import { json } from '@sveltejs/kit';
 import { GCounter } from "$lib/g-counter.js";
+import { PNCounter } from "$lib/pn-counter.js";
 
 export async function POST({ request }) {
-	const x = new GCounter("x");
-	const y = new GCounter("y");
-	const z = new GCounter("z");
+	// testing gcounter
+	let x = new GCounter("x");
+	let y = new GCounter("y");
+	let z = new GCounter("z");
 
 	x.inc(); x.inc();
 	y.inc(2);
@@ -18,6 +20,19 @@ export async function POST({ request }) {
 	z.join(x);
   
 	console.log("should be 8: ", z.read()); // 8
-	console.log(z.get());
+
+	// testing pncounter
+	x = new PNCounter("x");
+	y = new PNCounter("y");
+
+	x.inc(4); x.dec();
+	y.dec();
+
+	console.log(x.read() != y.read()); // different values 3 != -1
+
+	x.join(y); y.join(x);
+	
+	console.log(x.read() == y.read()); // same values 2 == 2
+
 	return json("hi");
 }
