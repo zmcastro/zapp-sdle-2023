@@ -1,5 +1,4 @@
 export class GCounter {
-
     #map = new Map();
     #id;
 
@@ -24,7 +23,7 @@ export class GCounter {
     local() {
         return this.#map.get(this.#id);
     }
-    
+
     // Read counter value
     read() {
         let res = 0;
@@ -35,7 +34,7 @@ export class GCounter {
     }
 
     // Increment value
-    inc(tosum=1) {
+    inc(tosum = 1) {
         this.#map[this.#id] += tosum;
     }
 

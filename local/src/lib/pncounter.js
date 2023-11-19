@@ -1,7 +1,6 @@
-import { GCounter } from "./g-counter";
+import { GCounter } from "./gcounter";
 
 export class PNCounter {
-
     #p = new GCounter();
     #n = new GCounter();
 
@@ -19,13 +18,13 @@ export class PNCounter {
     getN() {
         return this.#p.get();
     }
-    
+
     // Read local counter value
     local() {
         const val = this.#p.local() - this.#n.local();
         return val < 0 ? 0 : val;
     }
-    
+
     // Read counter value
     read() {
         const val = this.#p.read() - this.#n.read();
@@ -33,12 +32,12 @@ export class PNCounter {
     }
 
     // Increment value
-    inc(tosum=1) {
+    inc(tosum = 1) {
         this.#p.inc(tosum);
     }
 
     // Decrement value
-    dec(tosum=1) {
+    dec(tosum = 1) {
         this.#n.inc(tosum);
     }
 
