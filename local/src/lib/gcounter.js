@@ -6,6 +6,11 @@ export class GCounter {
         this.#id = id;
         this.#map[id] = 0;
     }
+    
+    constructor(counter) {
+        this.#map = new Map(counter.map);
+        this.#id = counter.id;
+    }
 
     // Set key
     setKey(id) {

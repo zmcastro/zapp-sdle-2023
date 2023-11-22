@@ -7,6 +7,11 @@ export class DotContext {
     #cc = new Map();
     #dc = new Set();
 
+    constructor(context) {
+        this.#cc = context.cc;
+        this.#dc = context.dc;
+    }
+
     /**
      * Get causal context (compact)
      *

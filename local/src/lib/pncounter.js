@@ -9,6 +9,11 @@ export class PNCounter {
         this.#n.setKey(id);
     }
 
+    constructor(counter) {
+        this.#p = new GCounter(counter.p);
+        this.#n = new GCounter(counter.n);
+    }
+
     // Get positive counter value
     getP() {
         return this.#p.get();
