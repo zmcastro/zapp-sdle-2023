@@ -98,7 +98,7 @@ public class ShoppingList {
     /**
      * Create a Shopping List from a JSON object
      *
-     * @param json JSON object
+     * @param String JSON object
      */
     public void fromJSON(String jsonString) {
         JSONObject json = new JSONObject(jsonString);
@@ -108,13 +108,4 @@ public class ShoppingList {
         this.products.fromJSON(json.getString("id"), json.getJSONObject("products"));
     }
 
-    /*
-    public String toJSON() {
-        JSONObject res = new JSONObject();
-        res.put("id", this.id);
-        res.put("name", this.name);
-        res.put("products", new JSONObject(this.products.toJSON()));
-        return res.toString();
-    }
-    */
 }
