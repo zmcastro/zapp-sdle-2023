@@ -1,4 +1,4 @@
-package model;
+package server.model;
 
 public class Product {
     public String name;
