@@ -1,42 +1,91 @@
 package server.model;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ShoppingList {
-    private int id;
-    private String name;
-    private ArrayList<Product> products;
+    private String id;
+    private AWORMap products;
 
-    public ShoppingList(int id) {
+    /**
+     * Constructor
+     *
+     * @param id Shopping list identifier
+     */
+    public ShoppingList(String id) {
         this.id = id;
-        this.name = "Shopping List " + this.id;
-        this.products = new ArrayList<>();
+        this.products = new AWORMap(id);
     }
 
-    public ShoppingList(int id, String name) {
-        this.id = id;
-        this.name = name;
-        this.products = new ArrayList<>();
-    }
-
-    public int getId() {
+    /**
+     * Get shopping list identifier
+     *
+     * @return Shopping list identifier
+     */
+    public String getId() {
         return id;
     }
-    public void setId(int id) {
-        this.id = id;
+
+    /**
+     * Get shopping list products
+     *
+     * @return Products list
+     */
+    public Iterator<Product> getProducts() {
+        return products.values();
     }
 
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
+    /**
+     * Add a new product to the shopping list
+     *
+     * @param product Product to be added
+     */
+    public void addProduct(Product product) {
+        products.add(product.getName(), product);
     }
 
-    public ArrayList<Product> getProducts() {
-        return products;
+    /**
+     * Remove a product from the shopping list
+     *
+     * @param product Product to be removed
+     */
+    public void removeProduct(Product product) {
+        products.rm(product.getName());
     }
-    public void setProducts(ArrayList<Product> products) {
-        this.products = products;
+
+    /**
+     * Merge two shopping lists
+     *
+     * @param shoppingList Shopping list to be merged
+     */
+    public void join(ShoppingList shoppingList) {
+        // Join products
+        products.join(shoppingList.products);
+
+        // Join counters
+        for (Product currProduct : products.elements()) {
+            Product newProduct = shoppingList.get(currProduct.getName());
+            if (newProduct != null) {
+                currProduct.join(newProduct);
+            }
+        }
+    }
+
+    /**
+     * Get a product from the shopping list
+     *
+     * @param productName Name of the product to retrieve
+     * @return Product
+     */
+    public Product get(String productName) {
+        return products.get(productName);
+    }
+
+    /**
+     * Create a Shopping List from a JSON object
+     *
+     * @param json JSON object
+     */
+    public void fromJSON(JSON json) {
+        this.products = new AWORMap(json.getJSONObject("products"));
     }
 }
