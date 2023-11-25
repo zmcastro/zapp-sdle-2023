@@ -11,7 +11,7 @@ export class Product {
      */
     constructor(name, u_id) {
         this.#name = name;
-        this.#counter = PNCounter(u_id);
+        this.#counter = new PNCounter(u_id);
     }
 
     /**
@@ -24,11 +24,21 @@ export class Product {
     }
 
     /**
+     * Get product counter
+     * 
+     * @returns {PNCounter} Product counter
+     */
+    getCounter() {
+        const res = this.#counter;
+        return res;
+    }
+
+    /**
      * Get product amount
      * 
      * @returns {Number} Product amount
      */
-    getCounter() {
+    value() {
         return this.#counter.read();
     }
 
@@ -66,6 +76,6 @@ export class Product {
      */
     fromJSON(json) {
         this.#name = json.name;
-        this.#counter = PNCounter(json.counter);
+        this.#counter = new PNCounter().fromJSON(json.counter);
     }
 }

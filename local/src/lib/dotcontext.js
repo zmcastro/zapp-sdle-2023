@@ -7,7 +7,7 @@ export class DotContext {
     #cc = new Map();
     #dc = new Set();
 
-    constructor(context) {
+    fromJSON(context) {
         this.#cc = context.cc;
         this.#dc = context.dc;
     }
@@ -31,15 +31,13 @@ export class DotContext {
     dotIn(dot) {
         const key = dot[0];
         const value = dot[1];
-        const res = false;
+        let res = false;
 
         if (this.#cc.has(key)) {
-            console.log("kjhdasfkjfaksjldfakdsf");
             res = value <= this.#cc.get(key);
         }
 
         if (this.#dc.has(dot)) {
-            console.log("not happening xd");
             res = true;
         }
 

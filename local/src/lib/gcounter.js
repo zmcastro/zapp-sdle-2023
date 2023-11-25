@@ -7,7 +7,7 @@ export class GCounter {
         this.#map[id] = 0;
     }
     
-    constructor(counter) {
+    fromJSON(counter) {
         this.#map = new Map(counter.map);
         this.#id = counter.id;
     }

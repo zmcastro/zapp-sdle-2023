@@ -23,7 +23,9 @@ export class AWORMap {
         this.#id = id;
     }
 
-    constructor(products) {
+    fromJSON(id, products) {
+        this.#id = id;
+
         for (const [key, value] of products.map) {
             const product = new Product(value[0], value[1]);
             this.add(key, product);
@@ -67,6 +69,19 @@ export class AWORMap {
     }
 
     /**
+     * Returns a map of the elements that are in the causal context
+     * 
+     * @returns {Map} elements
+     */
+    flatten() {
+        const cc = this.#cc.getCC();
+        return new Map(
+            [...this.#map].filter(([key, value]) => cc.get(key[0]) == key[1]),
+        );
+    }
+
+
+    /**
      * Adds a new element to the map, keeping the causal context
      *
      * @param {*} element_id Identifier of the element
@@ -89,7 +104,11 @@ export class AWORMap {
     }
 
     get(element_id) {
-        return this.#map.get(element_id);
+        for (const [key, value] of this.flatten()) {
+            if (key[0] == element_id)
+                return value;
+        }
+        return null;
     }
 
     /**
@@ -106,7 +125,7 @@ export class AWORMap {
         );
 
         for (const [key, value] of awormap.getMap()) {
-            if (!this.#cc.dotIn(key, value[1])) {
+            if (!this.#cc.dotIn(key[0], key[1])) {
                 this.#map.set(key, value);
             }
         }

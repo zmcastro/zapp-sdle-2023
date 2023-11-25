@@ -1,17 +1,17 @@
-import { GCounter } from "./gcounter";
+import { GCounter } from "$lib/gcounter";
 
 export class PNCounter {
-    #p = new GCounter();
-    #n = new GCounter();
+    #p = null;
+    #n = null;
 
     constructor(id) {
-        this.#p.setKey(id);
-        this.#n.setKey(id);
+        this.#p = new GCounter(id);
+        this.#n = new GCounter(id);
     }
 
-    constructor(counter) {
-        this.#p = new GCounter(counter.p);
-        this.#n = new GCounter(counter.n);
+    fromJSON(counter) {
+        this.#p = new GCounter().fromJSON(counter.p);
+        this.#n = new GCounter().fromJSON(counter.n);
     }
 
     // Get positive counter value

@@ -1,5 +1,5 @@
-import { AWORMap } from './awormap.js';
-import { Product } from './product.js';
+import { AWORMap } from '$lib/awormap.js';
+import { Product } from '$lib/product.js';
 
 export class ShoppingList {
     #id = null;
@@ -20,17 +20,31 @@ export class ShoppingList {
      * @returns shopping list identifier
      */
     getId() {
-        return this.#id;
+        const res = this.#id
+        return res;
     }
 
     /**
      * Get shopping list products
      * 
-     * @returns Products list
+     * @returns Products AWORMap
      */
     getProducts() {
-        return this.#products.values();
+        const res = this.#products;
+        return res;
     }
+    
+    /**
+     * Get specific product
+     * 
+     * @param {String} product_name
+     * 
+     * @returns Products list
+     */
+    getProduct(product_name) {
+        return this.#products.get(product_name);
+    }
+        
     
     /**
      * Add new product to shopping list
@@ -51,19 +65,44 @@ export class ShoppingList {
     }
 
     /**
+     * Increment product amount
+     * 
+     * @param {String} product_name
+     * @param {Number} tosum
+     */
+    incProduct(product_name, tosum = 1) {
+        const product = this.#products.get(product_name);
+        if (product) product.inc(tosum);
+    }
+
+    /**
+     * Decrement product amount
+     * 
+     * @param {String} product_name
+     * @param {Number} tosum
+     */
+    decProduct(product_name, tosum = 1) {
+        const product = this.#products.get(product_name);
+        if (product) product.dec(tosum);
+    }
+
+
+    /**
      * Merge shopping lists
      * 
      * @param {ShoppingList} shoppinglist
      */
     join(shoppinglist) {
-        // join products
-        this.#products.join(shoppinglist.#products);
-
         // join counters
-        for (const curr_product of this.#products.elements()) {
-            const new_product = shoppinglist.getProducts().get(curr_product.getName());
-            if (new_product) curr_product.join(new_product);
+        for (const [key, value] of this.#products.getMap()) {
+            const new_product = shoppinglist.getProduct(key[0]);
+            if (new_product) {
+                value.join(new_product);
+            } 
         }
+
+        // join products
+        this.#products.join(shoppinglist.getProducts());
     }
 
     /**
@@ -83,6 +122,6 @@ export class ShoppingList {
      */
 
     fromJSON(json) {
-        this.#products = new AWORMap(json.products);
+        this.#products = new AWORMap().fromJSON(json.id, json.products);
     }
 }

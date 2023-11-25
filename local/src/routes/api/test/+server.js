@@ -2,6 +2,8 @@ import { json } from "@sveltejs/kit";
 import { GCounter } from "$lib/gcounter.js";
 import { PNCounter } from "$lib/pncounter.js";
 import { AWORMap } from "$lib/awormap.js";
+import { ShoppingList } from "$lib/shoppinglist.js";
+import { Product } from "$lib/product.js";
 
 export async function POST({ request }) {
     // testing gcounter
@@ -66,6 +68,51 @@ export async function POST({ request }) {
     console.log("------------------");
 
     console.log(x.getMap(), x.getCC().getCC());
+
+    console.log("------------------");
+
+    // shopping list
+
+    let sl1 = new ShoppingList("1");
+    let sl2 = new ShoppingList("1");
+
+    let p1 = new Product("bananas", "1");
+    let p2 = new Product("oranges", "1");
+
+    let p1_ = new Product("bananas", "1");
+    let p2_ = new Product("hammer", "1");
+
+    sl1.addProduct(p1);
+    sl1.addProduct(p2);
+
+    sl1.incProduct("bananas", 3);
+
+    for (const product of sl1.getProducts().values()) {
+        console.log(product.getName(), product.value());
+    }
+
+    sl1.decProduct("bananas");
+
+    for (const product of sl1.getProducts().values()) {
+        console.log(product.getName(), product.value());
+    }
+
+    console.log("------------------");
+
+    sl2.addProduct(p1_);
+    sl2.addProduct(p2_);
+    sl2.incProduct("bananas", 1);
+
+    for (const product of sl2.getProducts().values()) {
+        console.log(product.getName(), product.value());
+    }
+
+    sl2.join(sl1);
+    console.log("------------------");
+
+    for (const product of sl2.getProducts().values()) {
+        console.log(product.getName(), product.value());
+    }
 
     return json("hi");
 }
