@@ -7,11 +7,6 @@ export class DotContext {
     #cc = new Map();
     #dc = new Set();
 
-    fromJSON(context) {
-        this.#cc = context.cc;
-        this.#dc = context.dc;
-    }
-
     /**
      * Get causal context (compact)
      *
@@ -126,5 +121,22 @@ export class DotContext {
         for (const dot of dotcontext.getCC()) this.insertDot(dot, false);
 
         this.compact();
+    }
+
+    fromJSON(context) {
+        this.#cc = context.cc;
+        this.#dc = context.dc;
+    }
+
+    toJSON() {
+        const res = {
+            cc: [],
+            dc: [],
+        };
+
+        for (const [key, value] of this.#cc) res.cc.push([key, value]);
+        for (const dot of this.#dc) res.dc.push(dot);
+
+        return res;
     }
 }

@@ -186,5 +186,11 @@ export async function POST({ request }) {
         );
     }
 
+    console.log("------------------");
+
+    const res = sl3.toJSON();
+
+    console.log(JSON.stringify(res));
+
     return json("hi");
 }

@@ -23,31 +23,6 @@ export class AWORMap {
         this.#id = id;
     }
 
-    fromJSON(id, products) {
-        this.#id = id;
-
-        for (const jproduct of products.map) {
-            const dot = [jproduct.name, jproduct.context];
-            const product = new Product();
-
-            product.fromJSON(jproduct);
-
-            this.#map.set(dot, product);
-        }
-
-        // FIXME: this seems to be an edge case, where due to the fact that we are reconstructing a map from a JSON, we need to
-        // insert the dots in the CC, but using insertDot() won't work due to how the compacting works, there may be a better way
-        // to do this, or not it could be fine as it is as it doesn't seem to be a common issue
-        for (const dot of products.context.cc)
-            this.#cc.getCC().set(dot[0], dot[1]);
-
-        if (products.context.dc.length > 0)
-            for (const dot of products.context.dc)
-                this.#cc.insertDot(dot, false);
-
-        console.log(this.#cc.getCC());
-    }
-
     /**
      *
      * @returns {Map} map
@@ -143,5 +118,50 @@ export class AWORMap {
         }
 
         this.#cc.join(awormap.getCC());
+    }
+
+    fromJSON(id, products) {
+        this.#id = id;
+
+        for (const jproduct of products.map) {
+            const dot = [jproduct.name, jproduct.context];
+            const product = new Product();
+
+            product.fromJSON(jproduct);
+
+            this.#map.set(dot, product);
+        }
+
+        // FIXME: this seems to be an edge case, where due to the fact that we are reconstructing a map from a JSON, we need to
+        // insert the dots in the CC, but using insertDot() won't work due to how the compacting works, there may be a better way
+        // to do this, or not it could be fine as it is as it doesn't seem to be a common issue
+        for (const dot of products.context.cc)
+            this.#cc.getCC().set(dot[0], dot[1]);
+
+        if (products.context.dc.length > 0)
+            for (const dot of products.context.dc)
+                this.#cc.insertDot(dot, false);
+
+    }
+
+    toJSON() {
+        const res = {
+            products: {
+                map: [],
+                context: {
+                },
+            },
+        };
+
+        for (const [key, value] of this.#map) {
+            const product = value.toJSON();
+            product.name = key[0];
+            product.context = key[1];
+            res.products.map.push(product);
+        }
+
+        res.products.context = this.#cc.toJSON()
+        
+        return res;
     }
 }

@@ -87,4 +87,12 @@ export class Product {
         this.#counter.setUID(this.#uid);
         this.#counter.fromJSON(product.counter);
     }
+
+    toJSON() {
+        const res = {
+            counter: this.#counter.toJSON(),
+        };
+
+        return res;
+    }
 }

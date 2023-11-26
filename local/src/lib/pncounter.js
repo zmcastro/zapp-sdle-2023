@@ -17,13 +17,6 @@ export class PNCounter {
         this.#n.setKey(id);
     }
 
-    fromJSON(counter) {
-        this.#p = new GCounter();
-        this.#p.fromJSON(counter.p);
-        this.#n = new GCounter();
-        this.#n.fromJSON(counter.n);
-    }
-
     // Get positive counter value
     getP() {
         return this.#p.get();
@@ -60,5 +53,21 @@ export class PNCounter {
     join(pncounter) {
         this.#p.join(pncounter.#p);
         this.#n.join(pncounter.#n);
+    }
+    
+    fromJSON(counter) {
+        this.#p = new GCounter();
+        this.#p.fromJSON(counter.p);
+        this.#n = new GCounter();
+        this.#n.fromJSON(counter.n);
+    }
+
+    toJSON() {
+        const res = {
+            p: this.#p.toJSON(),
+            n: this.#n.toJSON(),
+        };
+
+        return res;
     }
 }

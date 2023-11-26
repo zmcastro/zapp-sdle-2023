@@ -120,7 +120,16 @@ export class ShoppingList {
      */
 
     fromJSON(json) {
+        this.#id = json.id;
         this.#products = new AWORMap();
         this.#products.fromJSON(json.id, json.products);
+    }
+
+    toJSON() {
+        const res = {
+            id: this.#id,
+            products: this.#products.toJSON(),
+        };
+        return res;
     }
 }

@@ -7,13 +7,6 @@ export class GCounter {
         this.#map[id] = 0;
     }
 
-    fromJSON(counter) {
-        this.#map = new Map();
-        for (const [key, value] of counter) {
-            this.#map[key] = value;
-        }
-    }
-
     // Set key
     setKey(id) {
         this.#id = id;
@@ -51,5 +44,22 @@ export class GCounter {
             if (!this.#map.has(id)) this.#map[id] = 0;
             this.#map[id] = Math.max(this.#map[id], value);
         }
+    }
+
+    fromJSON(counter) {
+        this.#map = new Map();
+        for (const [key, value] of counter) {
+            this.#map[key] = value;
+        }
+    }
+
+    toJSON() {
+        const res = []; 
+        for (const [key, value] of Object.entries(this.#map)) {
+            console.log(key, value);
+            res.push([key, value]);
+        }
+        
+        return res;
     }
 }
