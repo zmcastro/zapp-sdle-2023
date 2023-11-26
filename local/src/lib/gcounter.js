@@ -6,16 +6,18 @@ export class GCounter {
         this.#id = id;
         this.#map[id] = 0;
     }
-    
+
     fromJSON(counter) {
-        this.#map = new Map(counter.map);
-        this.#id = counter.id;
+        this.#map = new Map();
+        for (const [key, value] of counter) {
+            this.#map[key] = value;
+        }
     }
 
     // Set key
     setKey(id) {
         this.#id = id;
-        this.#map[this.#id] = 0;
+        if (this.#map[this.#id] == undefined) this.#map[this.#id] = 0;
     }
 
     // Get map

@@ -3,15 +3,25 @@ import { GCounter } from "$lib/gcounter";
 export class PNCounter {
     #p = null;
     #n = null;
+    #uid = null;
 
     constructor(id) {
+        this.#uid = id;
         this.#p = new GCounter(id);
         this.#n = new GCounter(id);
     }
 
+    setUID(id) {
+        this.#uid = id;
+        this.#p.setKey(id);
+        this.#n.setKey(id);
+    }
+
     fromJSON(counter) {
-        this.#p = new GCounter().fromJSON(counter.p);
-        this.#n = new GCounter().fromJSON(counter.n);
+        this.#p = new GCounter();
+        this.#p.fromJSON(counter.p);
+        this.#n = new GCounter();
+        this.#n.fromJSON(counter.n);
     }
 
     // Get positive counter value
@@ -21,7 +31,7 @@ export class PNCounter {
 
     // Get negative counter value
     getN() {
-        return this.#p.get();
+        return this.#n.get();
     }
 
     // Read local counter value

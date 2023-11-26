@@ -26,12 +26,26 @@ export class AWORMap {
     fromJSON(id, products) {
         this.#id = id;
 
-        for (const [key, value] of products.map) {
-            const product = new Product(value[0], value[1]);
-            this.add(key, product);
+        for (const jproduct of products.map) {
+            const dot = [jproduct.name, jproduct.context];
+            const product = new Product();
+
+            product.fromJSON(jproduct);
+
+            this.#map.set(dot, product);
         }
-        
-        this.#cc = new DotContext(products.context);
+
+        // FIXME: this seems to be an edge case, where due to the fact that we are reconstructing a map from a JSON, we need to
+        // insert the dots in the CC, but using insertDot() won't work due to how the compacting works, there may be a better way
+        // to do this, or not it could be fine as it is as it doesn't seem to be a common issue
+        for (const dot of products.context.cc)
+            this.#cc.getCC().set(dot[0], dot[1]);
+
+        if (products.context.dc.length > 0)
+            for (const dot of products.context.dc)
+                this.#cc.insertDot(dot, false);
+
+        console.log(this.#cc.getCC());
     }
 
     /**
@@ -70,7 +84,7 @@ export class AWORMap {
 
     /**
      * Returns a map of the elements that are in the causal context
-     * 
+     *
      * @returns {Map} elements
      */
     flatten() {
@@ -79,7 +93,6 @@ export class AWORMap {
             [...this.#map].filter(([key, value]) => cc.get(key[0]) == key[1]),
         );
     }
-
 
     /**
      * Adds a new element to the map, keeping the causal context
@@ -105,8 +118,7 @@ export class AWORMap {
 
     get(element_id) {
         for (const [key, value] of this.flatten()) {
-            if (key[0] == element_id)
-                return value;
+            if (key[0] == element_id) return value;
         }
         return null;
     }

@@ -112,6 +112,78 @@ export async function POST({ request }) {
 
     for (const product of sl2.getProducts().values()) {
         console.log(product.getName(), product.value());
+        console.log(product.getCounter().getP(), product.getCounter().getN());
+    }
+
+    const sl3_json = {
+        id: "sl3",
+        products: {
+            map: [
+                {
+                    name: "bananas",
+                    context: "1",
+                    counter: {
+                        p: [
+                            ["1", "0"],
+                            ["2", "2"],
+                        ],
+                        n: [
+                            ["1", "0"],
+                            ["2", "1"],
+                        ],
+                    },
+                },
+                {
+                    name: "oranges",
+                    context: "1",
+                    counter: {
+                        p: [
+                            ["1", "1"],
+                            ["2", "0"],
+                        ],
+                        n: [
+                            ["1", "1"],
+                            ["2", "0"],
+                        ],
+                    },
+                },
+                {
+                    name: "bananas",
+                    context: "2",
+                    counter: {
+                        p: [
+                            ["1", "0"],
+                            ["2", "3"],
+                        ],
+                        n: [
+                            ["1", "0"],
+                            ["2", "1"],
+                        ],
+                    },
+                },
+            ],
+            context: {
+                cc: [
+                    ["oranges", "1"],
+                    ["bananas", "2"],
+                ],
+                dc: [],
+            },
+        },
+    };
+
+    console.log("------------------");
+
+    let sl3 = new ShoppingList();
+    sl3.fromJSON(sl3_json);
+
+    for (const product of sl3.getProducts().values()) {
+        console.log(
+            product.getName(),
+            product.value(),
+            product.getCounter().getP(),
+            product.getCounter().getN(),
+        );
     }
 
     return json("hi");

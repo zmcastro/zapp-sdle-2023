@@ -1,12 +1,12 @@
-import { AWORMap } from '$lib/awormap.js';
-import { Product } from '$lib/product.js';
+import { AWORMap } from "$lib/awormap.js";
+import { Product } from "$lib/product.js";
 
 export class ShoppingList {
     #id = null;
     #products = null;
 
     /**
-     * 
+     *
      * @param {String} id - Shopping list identifier
      */
     constructor(id) {
@@ -16,40 +16,39 @@ export class ShoppingList {
 
     /**
      * Get shopping list identifier
-     * 
+     *
      * @returns shopping list identifier
      */
     getId() {
-        const res = this.#id
+        const res = this.#id;
         return res;
     }
 
     /**
      * Get shopping list products
-     * 
+     *
      * @returns Products AWORMap
      */
     getProducts() {
         const res = this.#products;
         return res;
     }
-    
+
     /**
      * Get specific product
-     * 
+     *
      * @param {String} product_name
-     * 
+     *
      * @returns Products list
      */
     getProduct(product_name) {
         return this.#products.get(product_name);
     }
-        
-    
+
     /**
      * Add new product to shopping list
-     * 
-     * @param {Product} product 
+     *
+     * @param {Product} product
      */
     addProduct(product) {
         this.#products.add(product.getName(), product);
@@ -57,8 +56,8 @@ export class ShoppingList {
 
     /**
      * Remove product from shopping list
-     * 
-     * @param {Product} product 
+     *
+     * @param {Product} product
      */
     removeProduct(product) {
         this.#products.rm(product.getName());
@@ -66,7 +65,7 @@ export class ShoppingList {
 
     /**
      * Increment product amount
-     * 
+     *
      * @param {String} product_name
      * @param {Number} tosum
      */
@@ -77,7 +76,7 @@ export class ShoppingList {
 
     /**
      * Decrement product amount
-     * 
+     *
      * @param {String} product_name
      * @param {Number} tosum
      */
@@ -86,10 +85,9 @@ export class ShoppingList {
         if (product) product.dec(tosum);
     }
 
-
     /**
      * Merge shopping lists
-     * 
+     *
      * @param {ShoppingList} shoppinglist
      */
     join(shoppinglist) {
@@ -98,7 +96,7 @@ export class ShoppingList {
             const new_product = shoppinglist.getProduct(key[0]);
             if (new_product) {
                 value.join(new_product);
-            } 
+            }
         }
 
         // join products
@@ -107,8 +105,8 @@ export class ShoppingList {
 
     /**
      * Get product from shopping list
-     * 
-     * @param {String} product_name 
+     *
+     * @param {String} product_name
      * @returns Product
      */
     get(product_name) {
@@ -117,11 +115,12 @@ export class ShoppingList {
 
     /**
      * Create a Shopping List from a JSON object
-     * 
-     * @param {JSON} json 
+     *
+     * @param {JSON} json
      */
 
     fromJSON(json) {
-        this.#products = new AWORMap().fromJSON(json.id, json.products);
+        this.#products = new AWORMap();
+        this.#products.fromJSON(json.id, json.products);
     }
 }
