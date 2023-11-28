@@ -1,11 +1,10 @@
-import { json } from "@sveltejs/kit";
 import { GCounter } from "$lib/gcounter.js";
 import { PNCounter } from "$lib/pncounter.js";
 import { AWORMap } from "$lib/awormap.js";
 import { ShoppingList } from "$lib/shoppinglist.js";
 import { Product } from "$lib/product.js";
 
-export async function POST({ request }) {
+export async function GET({ request }) {
     // testing gcounter
     let x = new GCounter("x");
     let y = new GCounter("y");
@@ -73,8 +72,8 @@ export async function POST({ request }) {
 
     // shopping list
 
-    let sl1 = new ShoppingList("1");
-    let sl2 = new ShoppingList("1");
+    let sl1 = new ShoppingList("1", "sl1");
+    let sl2 = new ShoppingList("1", "sl2");
 
     let p1 = new Product("bananas", "1");
     let p2 = new Product("oranges", "1");
@@ -116,7 +115,8 @@ export async function POST({ request }) {
     }
 
     const sl3_json = {
-        id: "sl3",
+        id: "3",
+        name: "sl3",
         products: {
             map: [
                 {
@@ -192,5 +192,5 @@ export async function POST({ request }) {
 
     console.log(JSON.stringify(res));
 
-    return json("hi");
+    return new Response(JSON.stringify(sl3.toFrontendJSON()));
 }

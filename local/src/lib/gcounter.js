@@ -54,12 +54,11 @@ export class GCounter {
     }
 
     toJSON() {
-        const res = []; 
+        const res = [];
         for (const [key, value] of Object.entries(this.#map)) {
-            console.log(key, value);
             res.push([key, value]);
         }
-        
+
         return res;
     }
 }

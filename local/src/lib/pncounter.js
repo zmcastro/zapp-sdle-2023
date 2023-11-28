@@ -54,7 +54,7 @@ export class PNCounter {
         this.#p.join(pncounter.#p);
         this.#n.join(pncounter.#n);
     }
-    
+
     fromJSON(counter) {
         this.#p = new GCounter();
         this.#p.fromJSON(counter.p);

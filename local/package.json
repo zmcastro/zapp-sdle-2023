@@ -13,6 +13,7 @@
         "@sveltejs/adapter-auto": "^2.0.0",
         "@sveltejs/kit": "^1.27.4",
         "autoprefixer": "^10.4.14",
+        "daisyui": "^4.4.12",
         "postcss": "^8.4.24",
         "postcss-load-config": "^4.0.1",
         "prettier": "^3.1.0",

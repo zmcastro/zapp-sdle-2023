@@ -141,15 +141,13 @@ export class AWORMap {
         if (products.context.dc.length > 0)
             for (const dot of products.context.dc)
                 this.#cc.insertDot(dot, false);
-
     }
 
     toJSON() {
         const res = {
             products: {
                 map: [],
-                context: {
-                },
+                context: {},
             },
         };
 
@@ -160,8 +158,21 @@ export class AWORMap {
             res.products.map.push(product);
         }
 
-        res.products.context = this.#cc.toJSON()
-        
+        res.products.context = this.#cc.toJSON();
+
+        return res;
+    }
+
+    toFrontendJSON() {
+        const res = [];
+
+        for (const [key, value] of this.flatten()) {
+            res.push({
+                name: value.getName(),
+                count: value.value(),
+            });
+        }
+
         return res;
     }
 }

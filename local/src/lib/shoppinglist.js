@@ -4,14 +4,16 @@ import { Product } from "$lib/product.js";
 export class ShoppingList {
     #id = null;
     #products = null;
+    #name = null;
 
     /**
      *
      * @param {String} id - Shopping list identifier
      */
-    constructor(id) {
+    constructor(id, name) {
         this.#id = id;
         this.#products = new AWORMap();
+        this.#name = name;
     }
 
     /**
@@ -121,6 +123,7 @@ export class ShoppingList {
 
     fromJSON(json) {
         this.#id = json.id;
+        this.#name = json.name;
         this.#products = new AWORMap();
         this.#products.fromJSON(json.id, json.products);
     }
@@ -128,7 +131,17 @@ export class ShoppingList {
     toJSON() {
         const res = {
             id: this.#id,
+            name: this.#name,
             products: this.#products.toJSON(),
+        };
+        return res;
+    }
+
+    toFrontendJSON() {
+        const res = {
+            id: this.#id,
+            name: this.#name,
+            products: this.#products.toFrontendJSON(),
         };
         return res;
     }
