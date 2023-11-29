@@ -1,4 +1,4 @@
-import { GCounter } from "$lib/gcounter";
+import { GCounter } from "$lib/crdt/gcounter";
 
 export class PNCounter {
     #p = null;
@@ -11,7 +11,7 @@ export class PNCounter {
         this.#n = new GCounter(id);
     }
 
-    setUID(id) {
+    setUUID(id) {
         this.#uid = id;
         this.#p.setKey(id);
         this.#n.setKey(id);

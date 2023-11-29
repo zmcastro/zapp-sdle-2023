@@ -1,25 +1,89 @@
 <script>
+    import { ShoppingList } from "$lib/shoppinglist.js";
+    import { Product } from "$lib/product.js";
+    import { set, get } from "idb-keyval";
+    import { productStore } from "../../../stores.js";
+
     export let data;
-    const shoppinglist = data.sl;
+
+    let representation;
+    const shoppinglist = new ShoppingList();
+    shoppinglist.fromJSON(data.sl);
+
+    get("uuid").then((uuid) => {
+        shoppinglist.setUUID(uuid);
+    });
+
+    const updateShoppingList = () => {
+        set(shoppinglist.getID(), shoppinglist.toJSON());
+        representation = shoppinglist.toFrontendJSON();
+    };
+
+    updateShoppingList();
+
+    const addProduct = () => {
+        get("uuid").then((uuid) => {
+            const newProduct = new Product($productStore.name, uuid);
+            shoppinglist.addProduct(newProduct);
+            updateShoppingList();
+        });
+    };
+
+    const decProduct = (product) => {
+        shoppinglist.decProduct(product);
+        updateShoppingList();
+    };
+
+    const incProduct = (product) => {
+        shoppinglist.incProduct(product);
+        updateShoppingList();
+    };
+
+    const removeProduct = (product) => {
+        shoppinglist.removeProduct(product);
+        updateShoppingList();
+    };
 </script>
 
-<h1 class="font-bold text-xl">{shoppinglist.name}</h1>
+<h1 class="font-bold text-xl">{representation.name}</h1>
 
-<button class="btn min-h-fit h-fit font-bold btn-primary p-2"
-    >+ Add Product</button
->
+<form class="flex flex-row items-center gap-4" on:submit={() => addProduct()}>
+    <input
+        bind:value={$productStore.name}
+        type="text"
+        placeholder="Product Name"
+        class="input input-bordered w-full"
+    />
+    <button
+        disabled={$productStore.name == ""}
+        type="submit"
+        class="btn min-h-fit h-fit font-bold btn-primary p-2"
+        >+ Add Product</button
+    >
+</form>
+
 <div class="flex flex-col gap-4">
-    {#each shoppinglist.products as product}
+    {#each representation.products as product}
         <div class="card w-96 bg-base-100 shadow-xl">
             <div class="card-body flex-row justify-between p-3">
                 <h2 class="card-title font-medium text-lg truncate">
                     {product.name}
                 </h2>
                 <div>
-                    <button class="btn btn-ghost">-</button>
+                    <button
+                        disabled={product.count == 0}
+                        on:click={() => decProduct(product.name)}
+                        class="btn btn-ghost disabled:bg-inherit">-</button
+                    >
                     <span class="font-bold">{product.count}</span>
-                    <button class="btn btn-ghost">+</button>
-                    <button class="btn btn-ghost">X</button>
+                    <button
+                        on:click={() => incProduct(product.name)}
+                        class="btn btn-ghost">+</button
+                    >
+                    <button
+                        on:click={() => removeProduct(product.name)}
+                        class="btn btn-ghost">X</button
+                    >
                 </div>
             </div>
         </div>

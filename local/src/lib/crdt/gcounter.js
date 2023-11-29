@@ -1,3 +1,4 @@
+// TODO: Make a CCounter based on this
 export class GCounter {
     #map = new Map();
     #id;
@@ -35,7 +36,7 @@ export class GCounter {
 
     // Increment value
     inc(tosum = 1) {
-        this.#map[this.#id] += tosum;
+        this.#map[this.#id] = this.#map[this.#id] + tosum;
     }
 
     // Merge counters
@@ -56,7 +57,7 @@ export class GCounter {
     toJSON() {
         const res = [];
         for (const [key, value] of Object.entries(this.#map)) {
-            res.push([key, value]);
+            res.push([key, parseInt(value)]);
         }
 
         return res;

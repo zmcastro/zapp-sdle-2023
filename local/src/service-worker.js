@@ -1,5 +1,6 @@
 import { build, files, version } from "$service-worker";
 import { get, set } from "idb-keyval";
+import { v4 as uuidv4 } from "uuid";
 
 const CACHE = `cache-${version}`;
 
@@ -16,6 +17,9 @@ self.addEventListener("install", (event) => {
     }
 
     event.waitUntil(addFilesToCache());
+
+    const uuid = uuidv4();
+    set("uuid", uuid);
 });
 
 self.addEventListener("activate", (event) => {
@@ -33,9 +37,9 @@ self.addEventListener("fetch", (event) => {
     // ignore POST requests etc
     if (event.request.method !== "GET") {
         console.log("caught non-GET request");
-        set("hello", "world")
-            .then(() => console.log("It worked!"))
-            .catch((err) => console.log("It failed!", err));
+        // set("hello", "world")
+        //     .then(() => console.log("It worked!"))
+        //     .catch((err) => console.log("It failed!", err));
         return;
     }
 

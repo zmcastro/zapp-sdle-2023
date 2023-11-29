@@ -1,6 +1,6 @@
-import { GCounter } from "$lib/gcounter.js";
-import { PNCounter } from "$lib/pncounter.js";
-import { AWORMap } from "$lib/awormap.js";
+import { GCounter } from "$lib/crdt/gcounter.js";
+import { PNCounter } from "$lib/crdt/pncounter.js";
+import { AWORMap } from "$lib/crdt/awormap.js";
 import { ShoppingList } from "$lib/shoppinglist.js";
 import { Product } from "$lib/product.js";
 
@@ -192,5 +192,5 @@ export async function GET({ request }) {
 
     console.log(JSON.stringify(res));
 
-    return new Response(JSON.stringify(sl3.toFrontendJSON()));
+    return new Response(JSON.stringify(sl3.toJSON()));
 }

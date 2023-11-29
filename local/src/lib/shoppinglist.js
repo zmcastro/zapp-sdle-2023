@@ -1,4 +1,4 @@
-import { AWORMap } from "$lib/awormap.js";
+import { AWORMap } from "$lib/crdt/awormap.js";
 import { Product } from "$lib/product.js";
 
 export class ShoppingList {
@@ -21,7 +21,7 @@ export class ShoppingList {
      *
      * @returns shopping list identifier
      */
-    getId() {
+    getID() {
         const res = this.#id;
         return res;
     }
@@ -53,7 +53,8 @@ export class ShoppingList {
      * @param {Product} product
      */
     addProduct(product) {
-        this.#products.add(product.getName(), product);
+        const exists = this.#products.get(product.getName());
+        if (!exists) this.#products.add(product.getName(), product);
     }
 
     /**
@@ -61,8 +62,8 @@ export class ShoppingList {
      *
      * @param {Product} product
      */
-    removeProduct(product) {
-        this.#products.rm(product.getName());
+    removeProduct(product_name) {
+        this.#products.rm(product_name);
     }
 
     /**
@@ -73,7 +74,7 @@ export class ShoppingList {
      */
     incProduct(product_name, tosum = 1) {
         const product = this.#products.get(product_name);
-        if (product) product.inc(tosum);
+        if (product && product.value() >= 0) product.inc(tosum);
     }
 
     /**
@@ -84,7 +85,7 @@ export class ShoppingList {
      */
     decProduct(product_name, tosum = 1) {
         const product = this.#products.get(product_name);
-        if (product) product.dec(tosum);
+        if (product && product.value() > 0) product.dec(tosum);
     }
 
     /**
@@ -144,5 +145,11 @@ export class ShoppingList {
             products: this.#products.toFrontendJSON(),
         };
         return res;
+    }
+
+    setUUID(uuid) {
+        for (const [key, value] of this.#products.getMap()) {
+            value.setUUID(uuid);
+        }
     }
 }

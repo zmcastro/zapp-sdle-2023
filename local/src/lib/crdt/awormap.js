@@ -1,7 +1,7 @@
 // Optimized Add-Wins Observed-Remove Map
 
-import { DotContext } from "./dotcontext";
-import { Product } from "./product";
+import { DotContext } from "../crdt/dotcontext";
+import { Product } from "../product";
 
 /**
  * Add-Wins Observed-Remove Map (AWORMap) - A map that stores [element_id, dot_value] =>
@@ -14,6 +14,7 @@ export class AWORMap {
      * Map that stores [element_id, dot_value] => element
      */
     #map = new Map();
+
     /**
      * DotContext that stores element_id => dot_value
      */
@@ -77,7 +78,7 @@ export class AWORMap {
      */
     add(element_id, element) {
         const dot = this.#cc.makeDot(element_id);
-        this.#map.set([dot[0], dot[1]], element);
+        this.#map.set([dot[0], dot[1]], element); // [product.getName(), 1] => Product
     }
 
     /**
@@ -95,7 +96,7 @@ export class AWORMap {
         for (const [key, value] of this.flatten()) {
             if (key[0] == element_id) return value;
         }
-        return null;
+        return undefined;
     }
 
     /**
@@ -145,20 +146,18 @@ export class AWORMap {
 
     toJSON() {
         const res = {
-            products: {
-                map: [],
-                context: {},
-            },
+            map: [],
+            context: {},
         };
 
         for (const [key, value] of this.#map) {
             const product = value.toJSON();
             product.name = key[0];
             product.context = key[1];
-            res.products.map.push(product);
+            res.map.push(product);
         }
 
-        res.products.context = this.#cc.toJSON();
+        res.context = this.#cc.toJSON();
 
         return res;
     }
