@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+
+  # server-1, server-2 and server-3 are placeholders for the actual servers
+  server-1:
+    image: ealen/echo-server:latest
+    restart: always
+    environment:
+      - ENABLE__ENVIRONMENT=false
+
+  server-2:
+    image: ealen/echo-server:latest
+    restart: always
+    environment:
+      - ENABLE__ENVIRONMENT=false
+
+  server-3:
+    image: ealen/echo-server:latest
+    restart: always
+    environment:
+      - ENABLE__ENVIRONMENT=false
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - "./load-balancer/nginx.conf:/etc/nginx/nginx.conf"
+    ports:
+      - 9999:9999
+  
+  local:
+    build: 
+      context: ./local
+      dockerfile: Dockerfile
+    ports:
+      - "8000:5173"
+    volumes:
+      - ./local/src:/home/node/app/src
+      - ./local/static:/home/node/app/static
+      - ./local/vite.config.js:/home/node/app/vite.config.js
+      - ./local/tailwind.config.cjs:/home/node/app/tailwind.config.cjs
+      - ./local/postcss.config.cjs:/home/node/app/postcss.config.cjs
+      - ./local/svelte.config.js:/home/node/app/svelte.config.js
+    command: "npm run dev -- --host"
+    environment:
+      - PORT=5173
+      - HOST=0.0.0.0
