@@ -1,4 +1,4 @@
-package server.model;
+package server.model.crdts;
 
 import org.json.JSONObject;
 import server.model.crdts.PNCounter;

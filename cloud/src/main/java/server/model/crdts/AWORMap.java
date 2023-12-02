@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-
 public class AWORMap {
     private String id; // This is most likely deprecated
     /**
@@ -132,6 +131,7 @@ public class AWORMap {
         while (iterator.hasNext()) {
             Map.Entry<Pair<String, Integer>, Product> entry = iterator.next();
             Pair<String, Integer> key = entry.getKey();
+
             if (!awormap.getMap().containsKey(key) || !awormap.getCC().dotIn(key)) {
                 iterator.remove();
             }

@@ -27,6 +27,12 @@ public class PNCounter {
         return this.n;
     }
 
+    public void setUUID(String u_id) {
+        this.uid = u_id;
+        this.p.setKey(u_id);
+        this.n.setKey(u_id);
+    }
+
     // Read local counter value
     public int local() {
         int val = p.local() - n.local();
@@ -53,12 +59,5 @@ public class PNCounter {
     public void join(PNCounter pnCounter) {
         p.join(pnCounter.p);
         n.join(pnCounter.n);
-    }
-
-    public void setUUID(String u_id) { {
-        this.uid = u_id;
-        this.p.setKey(u_id);
-        this.n.setKey(u_id);
-    }
     }
 }

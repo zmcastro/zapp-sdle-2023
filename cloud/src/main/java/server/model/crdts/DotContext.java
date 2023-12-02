@@ -1,5 +1,6 @@
 package server.model.crdts;
 
+<<<<<<< HEAD
 
 import server.model.utils.Pair;
 
@@ -14,9 +15,6 @@ public class DotContext {
      *
      * @return Causal context
      */
-    public Map<String, Integer> getCC() {
-        return cc;
-    }
     public Set<Pair<String, Integer>> getDC() {
         return dc;
     }
@@ -57,7 +55,6 @@ public class DotContext {
                 int value = dot.getValue();
 
                 Integer ccValue = cc.get(key);
-
                 if (ccValue == null && value == 1) {
                     // key not in cc and value is 1
                     cc.put(key, value);
@@ -91,6 +88,7 @@ public class DotContext {
 
         cc.put(id, val);
         return new Pair<>(id, val);
+
     }
 
     /**
