@@ -43,7 +43,11 @@
         </button>
     </div>
 </div>
-<h2 class="font-bold">Local shoppinglists</h2>
+<h2 class="font-bold">Local shopping lists</h2>
+<a
+    class="btn text-base font-bold btn-primary p-1 px-4 min-h-fit h-fit"
+    href="/create">+ Create</a
+>
 <div
     class="flex flex-col gap-4 p-4 max-h-96 {Object.keys(shoppinglists.lists)
         .length > 5

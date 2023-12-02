@@ -16,6 +16,14 @@ export class ShoppingList {
         this.#name = name;
     }
 
+    setName(name) {
+        this.#name = name;
+    }
+
+    getName() {
+        return this.#name;
+    }
+
     /**
      * Get shopping list identifier
      *
