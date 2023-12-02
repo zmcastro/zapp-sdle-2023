@@ -1,4 +1,4 @@
-package server.model;
+package server.model.crdts;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package server.model;
+package server.model.crdts;
 
 public class PNCounter {
     private GCounter p;

@@ -1,8 +1,9 @@
-package server.model;
+package server.model.crdts;
 
 import java.util.Iterator;
 
-public class ShoppingList {
+public class Shoppi
+ngList {
     private String id;
     private AWORMap products;
 

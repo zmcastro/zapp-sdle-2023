@@ -1,4 +1,4 @@
-package server.model;
+package server.model.crdts;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

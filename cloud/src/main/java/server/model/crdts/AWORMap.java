@@ -1,15 +1,17 @@
-package server.model;
+package server.model.crdts;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.HashMap;
+
 
 public class AWORMap {
     private String id; // This is most likely deprecated
     /**
      * Map that stores [element_id, dot_value] => element
      */
-    private Map<int[], Product> map = new HashMap<>();
+    private HashMap<ArrayList<Object>, Product> map;
     /**
      * DotContext that stores element_id => dot_value
      */
@@ -22,21 +24,7 @@ public class AWORMap {
      */
     public AWORMap(String id) {
         this.id = id;
-    }
-
-    /**
-     * Constructor with products
-     *
-     * @param products Map of products
-     */
-    public AWORMap(Map<int[], Product> products) {
-        for (Map.Entry<int[], Product> entry : products.entrySet()) {
-            int[] key = entry.getKey();
-            Product value = entry.getValue();
-            this.add(key[0], value);
-        }
-
-        this.cc = new DotContext(products.context);
+        map = new HashMap<ArrayList<Object>, Product>();
     }
 
     /**
@@ -44,7 +32,7 @@ public class AWORMap {
      *
      * @return Map
      */
-    public Map<int[], Product> getMap() {
+    public Map<ArrayList<Object>, Product> getMap() {
         return map;
     }
 
@@ -62,7 +50,7 @@ public class AWORMap {
      *
      * @return Iterator of elements
      */
-    public Iterator<int[]> elements() {
+    public Iterator<ArrayList<Object>> elements() {
         return map.keySet().iterator();
     }
 
@@ -91,7 +79,7 @@ public class AWORMap {
      */
     public void add(int element_id, Product element) {
         int[] dot = cc.makeDot(element_id);
-        map.put(dot, element);
+        map.put(new Tuple(dot, element), element);
     }
 
     /**
@@ -102,9 +90,9 @@ public class AWORMap {
     public void rm(int element_id) {
         Iterator<Map.Entry<int[], Product>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<int[], Product> entry = iterator.next();
-            int[] key = entry.getKey();
-            if (key[0] == element_id) {
+            Map.Entry<Tuple, Product> entry = iterator.next();
+            String key = entry.getKey();
+            if (key[0].equals(element_id)) {
                 iterator.remove();
             }
         }
