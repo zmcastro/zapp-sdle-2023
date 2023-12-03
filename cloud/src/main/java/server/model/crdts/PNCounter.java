@@ -27,13 +27,13 @@ public class PNCounter {
     // Read local counter value
     public int local() {
         int val = p.local() - n.local();
-        return val < 0 ? 0 : val;
+        return Math.max(val, 0);
     }
 
     // Read counter value
     public int read() {
         int val = p.read() - n.read();
-        return val < 0 ? 0 : val;
+        return Math.max(val, 0);
     }
 
     // Increment value

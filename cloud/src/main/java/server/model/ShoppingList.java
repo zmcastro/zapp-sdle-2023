@@ -1,9 +1,12 @@
-package server.model.crdts;
+package server.model;
+
+import server.model.crdts.AWORMap;
+import server.model.utils.Pair;
 
 import java.util.Iterator;
+import java.util.Map;
 
-public class Shoppi
-ngList {
+public class ShoppingList {
     private String id;
     private AWORMap products;
 
@@ -63,10 +66,10 @@ ngList {
         products.join(shoppingList.products);
 
         // Join counters
-        for (Product currProduct : products.elements()) {
-            Product newProduct = shoppingList.get(currProduct.getName());
+        for (Map.Entry<Pair<String, Integer>, Product> entry : products.elements()) {
+            Product newProduct = shoppingList.get(entry.getKey().getKey()); // gets the element_id
             if (newProduct != null) {
-                currProduct.join(newProduct);
+                entry.getValue().join(newProduct);
             }
         }
     }
@@ -86,7 +89,7 @@ ngList {
      *
      * @param json JSON object
      */
-    public void fromJSON(JSON json) {
+    /*public void fromJSON(JSON json) {
         this.products = new AWORMap(json.getJSONObject("products"));
-    }
+    }*/
 }

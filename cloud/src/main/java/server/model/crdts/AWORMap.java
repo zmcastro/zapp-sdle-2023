@@ -1,9 +1,12 @@
 package server.model.crdts;
 
-import java.util.ArrayList;
+import server.model.Product;
+import server.model.utils.Pair;
+
 import java.util.Iterator;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 
 public class AWORMap {
@@ -11,7 +14,7 @@ public class AWORMap {
     /**
      * Map that stores [element_id, dot_value] => element
      */
-    private HashMap<ArrayList<Object>, Product> map;
+    private HashMap<Pair<String, Integer>, Product> map;
     /**
      * DotContext that stores element_id => dot_value
      */
@@ -24,7 +27,7 @@ public class AWORMap {
      */
     public AWORMap(String id) {
         this.id = id;
-        map = new HashMap<ArrayList<Object>, Product>();
+        map = new HashMap<Pair<String, Integer>, Product>();
     }
 
     /**
@@ -32,7 +35,7 @@ public class AWORMap {
      *
      * @return Map
      */
-    public Map<ArrayList<Object>, Product> getMap() {
+    public Map<Pair<String, Integer>, Product> getMap() {
         return map;
     }
 
@@ -46,12 +49,12 @@ public class AWORMap {
     }
 
     /**
-     * Get the elements of the map
+     * Get the entries of the map
      *
-     * @return Iterator of elements
+     * @return Set of map entries
      */
-    public Iterator<ArrayList<Object>> elements() {
-        return map.keySet().iterator();
+    public Set<Map.Entry<Pair<String, Integer>, Product>> elements() {
+        return map.entrySet();
     }
 
     /**
@@ -60,11 +63,14 @@ public class AWORMap {
      * @return Iterator of values
      */
     public Iterator<Product> values() {
-        Map<int[], Product> filteredMap = new HashMap<>();
-        for (Map.Entry<int[], Product> entry : map.entrySet()) {
-            int[] key = entry.getKey();
+        Map<Pair<String, Integer>, Product> filteredMap = new HashMap<>();
+        Map<String, Integer> context = cc.getCC();
+
+        for (Map.Entry<Pair<String, Integer>, Product> entry : map.entrySet()) {
+            Pair<String, Integer> key = entry.getKey();
             Product value = entry.getValue();
-            if (cc.getCC().containsKey(key[0]) && cc.getCC().get(key[0]) == key[1]) {
+            // if causal context contains element_id and its associated pr
+            if (cc.getCC().containsKey(key.getKey()) && cc.getCC().get(key.getKey()) == key.getValue()) {
                 filteredMap.put(key, value);
             }
         }
@@ -77,9 +83,9 @@ public class AWORMap {
      * @param element_id Identifier of the element
      * @param element    Element to be added
      */
-    public void add(int element_id, Product element) {
-        int[] dot = cc.makeDot(element_id);
-        map.put(new Tuple(dot, element), element);
+    public void add(String element_id, Product element) {
+        Pair<String, Integer> dot = cc.makeDot(element_id);
+        map.put(dot, element);
     }
 
     /**
@@ -87,12 +93,12 @@ public class AWORMap {
      *
      * @param element_id Identifier of the element
      */
-    public void rm(int element_id) {
-        Iterator<Map.Entry<int[], Product>> iterator = map.entrySet().iterator();
+    public void rm(String element_id) {
+        Iterator<Map.Entry<Pair<String, Integer>, Product>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<Tuple, Product> entry = iterator.next();
-            String key = entry.getKey();
-            if (key[0].equals(element_id)) {
+            Map.Entry<Pair<String, Integer>, Product> entry = iterator.next();
+            Pair<String, Integer> key = entry.getKey();
+            if (key.getKey().equals(element_id)) {
                 iterator.remove();
             }
         }
@@ -104,10 +110,10 @@ public class AWORMap {
      * @param element_id Identifier of the element
      * @return Element
      */
-    public Product get(int element_id) {
-        for (Map.Entry<int[], Product> entry : map.entrySet()) {
-            int[] key = entry.getKey();
-            if (key[0] == element_id) {
+    public Product get(String element_id) {
+        for (Map.Entry<Pair<String, Integer>, Product> entry : map.entrySet()) {
+            Pair<String, Integer> key = entry.getKey();
+            if (key.getKey().equals(element_id)) {
                 return entry.getValue();
             }
         }
@@ -120,18 +126,17 @@ public class AWORMap {
      * @param awormap AWORMap to join
      */
     public void join(AWORMap awormap) {
-        Iterator<Map.Entry<int[], Product>> iterator = map.entrySet().iterator();
+        Iterator<Map.Entry<Pair<String, Integer>, Product>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<int[], Product> entry = iterator.next();
-            int[] key = entry.getKey();
-            Product value = entry.getValue();
+            Map.Entry<Pair<String, Integer>, Product> entry = iterator.next();
+            Pair<String, Integer> key = entry.getKey();
             if (!awormap.getMap().containsKey(key) || !awormap.getCC().dotIn(key)) {
                 iterator.remove();
             }
         }
 
-        for (Map.Entry<int[], Product> entry : awormap.getMap().entrySet()) {
-            int[] key = entry.getKey();
+        for (Map.Entry<Pair<String, Integer>, Product> entry : awormap.getMap().entrySet()) {
+            Pair<String, Integer> key = entry.getKey();
             Product value = entry.getValue();
             if (!cc.dotIn(key, value.getCounter())) {
                 map.put(key, value);

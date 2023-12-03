@@ -1,31 +1,24 @@
 package server.model.crdts;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
+import server.model.utils.Pair;
+
+import java.util.*;
 
 public class DotContext {
-    private Map<Integer, Integer> cc = new HashMap<>();
-    private Set<int[]> dc = new HashSet<>();
-
-    /**
-     * Constructor with a context
-     *
-     * @param context DotContext
-     */
-    public DotContext(DotContext context) {
-        this.cc = new HashMap<>(context.cc);
-        this.dc = new HashSet<>(context.dc);
-    }
+    private Map<String, Integer> cc = new HashMap<>();
+    private Set<Pair<String, Integer>> dc = new HashSet<>();
 
     /**
      * Get causal context (compact)
      *
      * @return Causal context
      */
-    public Map<Integer, Integer> getCC() {
+    public Map<String, Integer> getCC() {
         return cc;
+    }
+    public Set<Pair<String, Integer>> getDC() {
+        return dc;
     }
 
     /**
@@ -34,15 +27,20 @@ public class DotContext {
      * @param dot Tuple [key, value]
      * @return true if dot is in causal context
      */
-    public boolean dotIn(int[] dot) {
-        int key = dot[0];
-        int value = dot[1];
+    public boolean dotIn(Pair<String, Integer> dot) {
+        String key = dot.getKey();
+        int value = dot.getValue();
+        boolean res = false;
 
         if (cc.containsKey(key)) {
-            return value <= cc.get(key);
+            res = value <= cc.get(key);
         }
 
-        return dc.contains(dot);
+        if (dc.contains(dot)) {
+            res = true;
+        }
+
+        return res;
     }
 
     /**
@@ -54,9 +52,9 @@ public class DotContext {
         // We do it in a loop because we may be able to compact more than once
         do {
             canCompact = false;
-            for (int[] dot : dc) {
-                int key = dot[0];
-                int value = dot[1];
+            for (Pair<String, Integer> dot : new HashSet<>(dc)) {
+                String key = dot.getKey();
+                int value = dot.getValue();
 
                 Integer ccValue = cc.get(key);
 
@@ -87,10 +85,12 @@ public class DotContext {
      * @param id ID of the dot
      * @return Tuple [key, value]
      */
-    public int[] makeDot(int id) {
-        cc.merge(id, 1, Integer::sum);
+    public Pair<String, Integer> makeDot(String id) {
+        int val = 1;
+        if (cc.containsKey(id)) val += cc.get(id);
 
-        return new int[]{id, cc.get(id)};
+        cc.put(id, val);
+        return new Pair<>(id, val);
     }
 
     /**
@@ -99,7 +99,7 @@ public class DotContext {
      * @param dot Tuple [key, value]
      * @param compact Flag to indicate whether to compact
      */
-    public void insertDot(int[] dot, boolean compact) {
+    public void insertDot(Pair<String, Integer> dot, boolean compact) {
         dc.add(dot);
         if (compact) compact();
     }
@@ -114,18 +114,34 @@ public class DotContext {
         if (dotContext == this) return;
 
         // Add compacted dots of otherCC to this
-        for (Map.Entry<Integer, Integer> entry : dotContext.getCC().entrySet()) {
-            int key = entry.getKey();
+        for (Map.Entry<String, Integer> entry : dotContext.getCC().entrySet()) {
+            String key = entry.getKey();
             int value = entry.getValue();
-
-            cc.merge(key, value, Integer::max);
+            cc.merge(key, value, Integer::max); // CHECK: if this works as intended
         }
 
         // Add dots of otherDC to this
-        for (int[] dot : dotContext.dc) {
+        for (Pair<String, Integer> dot : dotContext.dc) {
             insertDot(dot, false);
         }
 
         compact();
     }
+
+    /*
+    public void fromJSON(DotContext context) {
+        this.cc = context.getCC();
+        this.dc = context.getDC();
+    }
+
+    public Map<String, Object> toJSON() {
+        Map<String, Object> res = new HashMap<>();
+        List<Map.Entry<String, Integer>> ccList = new ArrayList<>(cc.entrySet());
+
+        res.put("cc", ccList);
+        res.put("dc", new ArrayList<>(dc));
+
+        return res;
+    }
+    */
 }

@@ -1,9 +1,10 @@
-package server.model.crdts;
+package server.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
+
+import server.model.crdts.PNCounter;
 
 public class Product {
     public String name;
