@@ -138,7 +138,7 @@ public class AWORMap {
         for (Map.Entry<Pair<String, Integer>, Product> entry : awormap.getMap().entrySet()) {
             Pair<String, Integer> key = entry.getKey();
             Product value = entry.getValue();
-            if (!cc.dotIn(key, value.getCounter())) {
+            if (!cc.dotIn(key)) {
                 map.put(key, value);
             }
         }
