@@ -1,7 +1,5 @@
 package server.model.crdts;
 
-<<<<<<< HEAD
-
 import server.model.utils.Pair;
 
 import java.util.*;
@@ -15,8 +13,11 @@ public class DotContext {
      *
      * @return Causal context
      */
+<<<<<<< HEAD
     public Set<Pair<String, Integer>> getDC() {
         return dc;
+    public Map<String, Integer> getCC() {
+        return cc;
     }
 
     /**
@@ -85,10 +86,8 @@ public class DotContext {
     public Pair<String, Integer> makeDot(String id) {
         int val = 1;
         if (cc.containsKey(id)) val += cc.get(id);
-
         cc.put(id, val);
         return new Pair<>(id, val);
-
     }
 
     /**

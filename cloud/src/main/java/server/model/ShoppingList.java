@@ -1,11 +1,12 @@
 package server.model;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.json.JSONObject;
+
 import server.model.crdts.AWORMap;
 import server.model.utils.Pair;
+
+import java.util.Iterator;
+import java.util.Map;
 
 public class ShoppingList {
     private String id;
@@ -107,5 +108,4 @@ public class ShoppingList {
         this.products = new AWORMap();
         this.products.fromJSON(json.getString("id"), json.getJSONObject("products"));
     }
-
 }
