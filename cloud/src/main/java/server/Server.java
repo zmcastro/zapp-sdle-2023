@@ -7,12 +7,41 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import ConsistentHashing.ConsistentHashing;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.web.server.ConfigurableWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class Server {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Server.class, args);
+    public static int port;
+
+    @Bean
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        Server.port = port;
+    }
+
+    @Bean
+    public WebServerFactoryCustomizer<ConfigurableWebServerFactory> webServerFactoryCustomizer() {
+        return factory -> {
+            factory.setPort(port);
+        };
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner() {
+        return args -> {
+            System.out.println("Server is running on port " + port);
+        };
+    }
+
+    public ConfigurableApplicationContext run() {
+        return SpringApplication.run(Server.class);
     }
 
     @Bean
