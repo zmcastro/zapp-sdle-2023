@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+=======
+>>>>>>> ac2ed4d (use consistent hashing to store data in correct database folder)
 
 public class DBHandler {
 
     private static final String JSON_DIRECTORY = "src/main/java/database/";
+<<<<<<< HEAD
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     public String getFile(String node, Long id) throws IOException {
@@ -76,5 +80,24 @@ public class DBHandler {
             return new ArrayList<>(Arrays.asList(node, nodes.get(nodes.indexOf(node) - 1), nodes.get(0)));
         }
         return new ArrayList<>(Arrays.asList(node, nodes.get(nodes.indexOf(node) - 1), nodes.get(nodes.indexOf(node) + 1)));
+=======
+    public String getFile(String server, Long id) throws IOException {
+        String filePath = JSON_DIRECTORY + server + "/" + id + ".json";
+        try {
+            String jsonData = new String(Files.readAllBytes(Paths.get(filePath)));
+            return jsonData;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public void storeFile(String server, Long id, String jsonData) throws IOException {
+        String filePath = JSON_DIRECTORY + server + "/" + id + ".json";
+        try {
+            Files.write(Paths.get(filePath), jsonData.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (Exception e) {
+            throw e;
+        }
+>>>>>>> ac2ed4d (use consistent hashing to store data in correct database folder)
     }
 }

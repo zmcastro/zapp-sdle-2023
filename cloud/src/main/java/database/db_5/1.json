@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"id": 1, "name": "works??", "products": []}
+=======
+{"id": 2, "name": "works?", "products": []}
+>>>>>>> ac2ed4d (use consistent hashing to store data in correct database folder)
