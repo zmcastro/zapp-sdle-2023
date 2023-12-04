@@ -20,9 +20,9 @@ public class ShoppingListController {
 
     @GetMapping("/{id}")
     public ResponseEntity<String> getShoppingList(@PathVariable Long id) {
-        String server = consistentHashing.getNode(String.valueOf(id));
+        String node = consistentHashing.getNode(String.valueOf(id));
         try {
-            String data = dbHandler.getFile(server, id);
+            String data = dbHandler.getFile(node, id);
             return ResponseEntity.ok(data);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error reading Shopping List with ID: " + id);
@@ -38,9 +38,9 @@ public class ShoppingListController {
         // merge
         // Shopping list to json
 
-        String server = consistentHashing.getNode(String.valueOf(id));
+        String node = consistentHashing.getNode(String.valueOf(id));
         try {
-            dbHandler.storeFile(server, id, jsonData);
+            dbHandler.storeFile(node, id, jsonData);
             return ResponseEntity.ok("Shopping List with ID " + id + " stored successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error storing Shopping List with ID: " + id);
