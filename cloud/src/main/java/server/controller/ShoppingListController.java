@@ -1,25 +1,29 @@
 package server.controller;
 
+import database.DBHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import ConsistentHashing.ConsistentHashing;
 
 @RestController
 @RequestMapping("/")
 public class ShoppingListController {
 
-    private static final String JSON_DIRECTORY = "src/main/java/database/";
+    private final ConsistentHashing consistentHashing;
+    private final DBHandler dbHandler;
+
+    public ShoppingListController(ConsistentHashing consistentHashing, DBHandler dbHandler) {
+        this.consistentHashing = consistentHashing;
+        this.dbHandler = dbHandler;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<String> getShoppingList(@PathVariable Long id) {
-        String filePath = JSON_DIRECTORY + "1/" + id + ".json"; // hardcoded for node 1, need to figure out node
+        String server = consistentHashing.getNode(String.valueOf(id));
         try {
-            String jsonData = new String(Files.readAllBytes(Paths.get(filePath)));
-            return ResponseEntity.ok(jsonData);
+            String data = dbHandler.getFile(server, id);
+            return ResponseEntity.ok(data);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error reading Shopping List with ID: " + id);
         }
@@ -34,9 +38,9 @@ public class ShoppingListController {
         // merge
         // Shopping list to json
 
-        String filePath = JSON_DIRECTORY + "1/" + id + ".json";
+        String server = consistentHashing.getNode(String.valueOf(id));
         try {
-            Files.write(Paths.get(filePath), jsonData.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+            dbHandler.storeFile(server, id, jsonData);
             return ResponseEntity.ok("Shopping List with ID " + id + " stored successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error storing Shopping List with ID: " + id);
