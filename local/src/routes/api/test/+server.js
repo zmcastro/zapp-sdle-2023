@@ -3,6 +3,7 @@ import { PNCounter } from "$lib/crdt/pncounter.js";
 import { AWORMap } from "$lib/crdt/awormap.js";
 import { ShoppingList } from "$lib/shoppinglist.js";
 import { Product } from "$lib/product.js";
+import { CCounter } from "../../../lib/crdt/ccounter.js";
 
 export async function GET({ request }) {
     // testing gcounter
@@ -101,6 +102,10 @@ export async function GET({ request }) {
     sl2.addProduct(p1_);
     sl2.addProduct(p2_);
     sl2.incProduct("bananas", 1);
+    sl2.removeProduct(p2_.getName());
+    sl2.addProduct(p2_);
+
+    console.log(sl2.getProducts().getCC().getCC(), sl2.getProducts().getMap());
 
     for (const product of sl2.getProducts().values()) {
         console.log(product.getName(), product.value());
@@ -108,6 +113,7 @@ export async function GET({ request }) {
 
     sl2.join(sl1);
     console.log("------------------");
+    console.log(sl2.getProducts().getCC().getCC(), sl2.getProducts().getMap());
 
     for (const product of sl2.getProducts().values()) {
         console.log(product.getName(), product.value());
@@ -119,20 +125,6 @@ export async function GET({ request }) {
         name: "sl3",
         products: {
             map: [
-                {
-                    name: "bananas",
-                    context: "1",
-                    counter: {
-                        p: [
-                            ["1", "0"],
-                            ["2", "2"],
-                        ],
-                        n: [
-                            ["1", "0"],
-                            ["2", "1"],
-                        ],
-                    },
-                },
                 {
                     name: "oranges",
                     context: "1",
@@ -191,6 +183,35 @@ export async function GET({ request }) {
     const res = sl3.toJSON();
 
     console.log(JSON.stringify(res));
+
+    console.log("------------------");
+
+    const cc1 = new CCounter("1");
+    const cc2 = new CCounter("1");
+    const cc3 = new CCounter("3");
+
+    cc1.inc(2);
+    cc2.inc(2);
+
+    console.log(cc1.read(), cc2.read());
+    
+    cc2.setID("2");
+    cc1.inc(1);
+    cc2.dec(2);
+
+    console.log(cc1.read(), cc2.read());
+
+    console.log("cc1", cc1.read(), cc1.getMap(), cc1.getCC().getCC());
+    console.log("cc2",cc2.read(), cc2.getMap(), cc2.getCC().getCC());
+    cc1.join(cc2);
+    console.log("cc1",cc1.read(), cc1.getMap(), cc1.getCC().getCC());
+    
+    console.log("------------------");
+
+    cc3.dec(2);
+    cc3.join(cc1);
+
+    console.log("cc3",cc3.read(), cc3.getMap(), cc3.getCC().getCC());
 
     return new Response(JSON.stringify(sl3.toJSON()));
 }

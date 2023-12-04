@@ -60,6 +60,8 @@ export class AWORMap {
 
     /**
      * Returns a map of the elements that are in the causal context
+     * 
+     * DEPRECATED: #map is now correct
      *
      * @returns {Map} elements
      */
@@ -78,6 +80,11 @@ export class AWORMap {
      */
     add(element_id, element) {
         const dot = this.#cc.makeDot(element_id);
+        for (const [key, value] of this.#map) {
+            if (key[0] == element_id) {
+                this.#map.delete(key);
+            }
+        }
         this.#map.set([dot[0], dot[1]], element); // [product.getName(), 1] => Product
     }
 
@@ -87,16 +94,35 @@ export class AWORMap {
      * @param {*} element_id Identifier of the element
      */
     rm(element_id) {
+        const dot = this.#cc.makeDot(element_id);
+
         for (const [key, value] of this.#map) {
-            if (key[0] == element_id) this.#map.delete(key);
+            if (key[0] == element_id) {
+                this.#map.delete(key);
+            } 
         }
     }
 
     get(element_id) {
-        for (const [key, value] of this.flatten()) {
+        for (const [key, value] of this.#map) {
             if (key[0] == element_id) return value;
         }
         return undefined;
+    }
+
+    /**
+     * Checks if [key,value] is in the map
+     * Note: I'm aware this is preposterous code but apparently two arrays ["banana", 1] and ["banana", 1] are not equal
+     * 
+     * @param {Array} key 
+     * @returns {Boolean}
+     */
+    hasKey(key) {
+        for (const [_key, value] of this.#map) {
+            console.log(_key, key, value, _key[0] == key[0] && _key[1] == key[1]);
+            if (_key[0] == key[0] && _key[1] == key[1]) return true;
+        }
+        return false;
     }
 
     /**
@@ -108,12 +134,12 @@ export class AWORMap {
         this.#map = new Map(
             [...this.#map].filter(
                 ([key, value]) =>
-                    awormap.getMap().has(key) || !awormap.getCC().dotIn(key),
+                    awormap.hasKey(key) || !awormap.getCC().dotIn(key)
             ),
         );
 
         for (const [key, value] of awormap.getMap()) {
-            if (!this.#cc.dotIn(key[0], key[1])) {
+            if (!this.#cc.dotIn(key)) {
                 this.#map.set(key, value);
             }
         }
@@ -126,6 +152,7 @@ export class AWORMap {
 
         for (const jproduct of products.map) {
             const dot = [jproduct.name, jproduct.context];
+            // TODO: Move this to the ShoppingList class
             const product = new Product();
 
             product.fromJSON(jproduct);
@@ -165,7 +192,7 @@ export class AWORMap {
     toFrontendJSON() {
         const res = [];
 
-        for (const [key, value] of this.flatten()) {
+        for (const [key, value] of this.#map) {
             res.push({
                 name: value.getName(),
                 count: value.value(),
