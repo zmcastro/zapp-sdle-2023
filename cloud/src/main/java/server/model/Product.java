@@ -2,6 +2,7 @@ package server.model;
 
 import org.json.JSONObject;
 
+import org.json.JSONObject;
 import server.model.crdts.PNCounter;
 
 public class Product {

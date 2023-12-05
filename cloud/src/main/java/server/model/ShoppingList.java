@@ -108,4 +108,14 @@ public class ShoppingList {
         this.products = new AWORMap();
         this.products.fromJSON(json.getString("id"), json.getJSONObject("products"));
     }
+
+    /*
+    public String toJSON() {
+        JSONObject res = new JSONObject();
+        res.put("id", this.id);
+        res.put("name", this.name);
+        res.put("products", new JSONObject(this.products.toJSON()));
+        return res.toString();
+    }
+    */
 }
