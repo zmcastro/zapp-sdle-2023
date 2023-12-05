@@ -5,15 +5,17 @@ export class ShoppingList {
     #id = null;
     #products = null;
     #name = null;
+    #remove = null;
 
     /**
      *
      * @param {String} id - Shopping list identifier
      */
-    constructor(id, name) {
+    constructor(id, name, remove = false) {
         this.#id = id;
         this.#products = new AWORMap();
         this.#name = name;
+        this.#remove = remove;
     }
 
     setName(name) {
@@ -22,6 +24,14 @@ export class ShoppingList {
 
     getName() {
         return this.#name;
+    }
+
+    setRemove(remove) {
+        this.#remove = remove;
+    }
+
+    getRemove() {
+        return this.#remove;
     }
 
     /**
@@ -63,6 +73,7 @@ export class ShoppingList {
     addProduct(product) {
         const exists = this.#products.get(product.getName());
         if (!exists) this.#products.add(product.getName(), product);
+        this.incProduct(product.getName());
     }
 
     /**
@@ -82,7 +93,7 @@ export class ShoppingList {
      */
     incProduct(product_name, tosum = 1) {
         const product = this.#products.get(product_name);
-        if (product && product.value() >= 0) product.inc(tosum);
+        if (product) product.inc(tosum);
     }
 
     /**
@@ -94,6 +105,7 @@ export class ShoppingList {
     decProduct(product_name, tosum = 1) {
         const product = this.#products.get(product_name);
         if (product && product.value() > 0) product.dec(tosum);
+        if (product && product.value() <= 0 && this.#remove) this.removeProduct(product_name);
     }
 
     /**
@@ -133,7 +145,9 @@ export class ShoppingList {
     fromJSON(json) {
         this.#id = json.id;
         this.#name = json.name;
+        this.#remove = json.remove;
         this.#products = new AWORMap();
+        // TODO: Iterate over products here
         this.#products.fromJSON(json.id, json.products);
     }
 
@@ -141,6 +155,7 @@ export class ShoppingList {
         const res = {
             id: this.#id,
             name: this.#name,
+            remove: this.#remove,
             products: this.#products.toJSON(),
         };
         return res;

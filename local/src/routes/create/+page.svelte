@@ -10,6 +10,7 @@
     let products = shoppinglist.toFrontendJSON().products;
     let productName = "";
     let shoppingListName = shoppinglist.getName();
+    let remove = shoppinglist.getRemove();
 
     const addProduct = () => {
         get("uuid").then((uuid) => {
@@ -39,6 +40,12 @@
         set(shoppinglist.getID(), shoppinglist.toJSON());
         // TODO: Save it to the cloud
     };
+
+    const toggleRemove = () => {
+        remove = !remove;
+        shoppinglist.setRemove(remove);
+    }
+
 </script>
 
 <h1 class="font-bold w-fit">Create a new shopping list</h1>
@@ -51,6 +58,13 @@
         class="input input-bordered"
         name="name"
     />
+    <div class="form-control gap-4">
+        <label class="label cursor-pointer">
+            <span class="label-text pr-3">Remove item when count is 0</span> 
+            <input type="checkbox" class="toggle" checked={remove} on:change={() => toggleRemove()} />
+        </label>
+    </div>
+
     <h2 class="font-bold w-fit">Products</h2>
     <div class="flex flex-row items-center gap-2">
         <input
@@ -105,6 +119,7 @@
 
 <div>
     <button
+        disabled={shoppingListName == "" || products.length == 0}
         on:click={saveShoppingList}
         type="submit"
         class="btn min-h-fit h-fit p-3 w-full btn-primary">Create</button

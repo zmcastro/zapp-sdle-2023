@@ -123,6 +123,7 @@ export async function GET({ request }) {
     const sl3_json = {
         id: "3",
         name: "sl3",
+        remove: "true",
         products: {
             map: [
                 {
