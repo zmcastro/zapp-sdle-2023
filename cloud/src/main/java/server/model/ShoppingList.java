@@ -1,13 +1,15 @@
 package server.model;
 
-import server.model.crdts.AWORMap;
-import server.model.utils.Pair;
-
 import java.util.Iterator;
 import java.util.Map;
 
+import org.json.JSONObject;
+import server.model.crdts.AWORMap;
+import server.model.utils.Pair;
+
 public class ShoppingList {
     private String id;
+    private String name;
     private AWORMap products;
 
     /**
@@ -17,7 +19,7 @@ public class ShoppingList {
      */
     public ShoppingList(String id) {
         this.id = id;
-        this.products = new AWORMap(id);
+        this.products = new AWORMap();
     }
 
     /**
@@ -27,6 +29,15 @@ public class ShoppingList {
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * Get shopping list display name
+     *
+     * @return Shopping list name
+     */
+    public String getName() {
+        return name;
     }
 
     /**
@@ -89,7 +100,21 @@ public class ShoppingList {
      *
      * @param json JSON object
      */
-    /*public void fromJSON(JSON json) {
-        this.products = new AWORMap(json.getJSONObject("products"));
-    }*/
+    public void fromJSON(String jsonString) {
+        JSONObject json = new JSONObject(jsonString);
+        this.id = json.getString("id");
+        this.name = json.getString("name");
+        this.products = new AWORMap();
+        this.products.fromJSON(json.getString("id"), json.getJSONObject("products"));
+    }
+
+    /*
+    public String toJSON() {
+        JSONObject res = new JSONObject();
+        res.put("id", this.id);
+        res.put("name", this.name);
+        res.put("products", new JSONObject(this.products.toJSON()));
+        return res.toString();
+    }
+    */
 }

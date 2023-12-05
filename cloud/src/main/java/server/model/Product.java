@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
+import org.json.JSONObject;
 import server.model.crdts.PNCounter;
 
 public class Product {
+
+    public String uid;
     public String name;
     public PNCounter counter;
 
@@ -15,7 +18,8 @@ public class Product {
      * @param {String} name - Product name
      * @param {String} u_id - User identifier
      */
-    Product(String name, String u_id) {
+    public Product(String name, String u_id) {
+        this.uid = u_id;
         this.name = name;
         this.counter = new PNCounter(u_id);
     }
@@ -36,6 +40,11 @@ public class Product {
      */
     public int getCounter() {
         return counter.read();
+    }
+
+    public void setUUID(String u_id) {
+        this.uid = u_id;
+        this.counter.setUUID(u_id);
     }
 
     /**
@@ -70,12 +79,10 @@ public class Product {
      *
      * @param json JSON object in string format
      */
-    public void fromJSON(String json) throws IOException {
+    public void fromJSON(JSONObject json) {
         /* test: { \"name\" : \"ShopList\", \"counter\" : \"18\" } */
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(json);
-        this.name = jsonNode.get("name").asText();
-        this.counter = new PNCounter(jsonNode.get("counter").asText());
+        this.name = json.getString("name");
+        // this.counter = new PNCounter(json.get("counter"));
     }
 }

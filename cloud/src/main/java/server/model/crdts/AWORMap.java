@@ -1,8 +1,11 @@
 package server.model.crdts;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import server.model.Product;
 import server.model.utils.Pair;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +28,8 @@ public class AWORMap {
      *
      * @param id Identifier
      */
-    public AWORMap(String id) {
-        this.id = id;
-        map = new HashMap<Pair<String, Integer>, Product>();
+    public AWORMap() {
+        map = new HashMap<>();
     }
 
     /**
@@ -145,5 +147,56 @@ public class AWORMap {
 
         cc.join(awormap.getCC());
     }
+
+    public void fromJSON(String id, JSONObject products) {
+        this.id = id;
+
+        for (Object product : products.getJSONArray("map")) {
+            JSONObject jProduct = (JSONObject) product;
+            Pair<String, Integer> dot = new Pair<>(jProduct.getString("name"), jProduct.getInt("context"));
+            Product newProduct = new Product(jProduct.getString("name"), id);
+            newProduct.fromJSON(jProduct);
+
+            map.put(dot, newProduct);
+        }
+
+        for (Object dot : products.getJSONObject("context").getJSONArray("cc")) {
+            JSONObject jDot = (JSONObject) dot;
+
+             // cc.getCC().put(dot[0], dot[1]); CHECKME
+        }
+
+        if (!products.getJSONObject("context").getJSONArray("dc").isEmpty()) {
+            for (Object dot : products.getJSONObject("context").getJSONArray("dc")) {
+                JSONObject jDot = (JSONObject) dot;
+                // cc.insertDot(dot, false);
+            }
+        }
+    }
+
+    /*
+    public String toJSON() {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> res = new HashMap<>();
+        res.put("map", new ArrayList<>());
+        res.put("context", new HashMap<>());
+
+        for (Map.Entry<String[], Product> entry : map.entrySet()) {
+            Map<String, Object> product = entry.getValue().toJSON();
+            product.put("name", entry.getKey()[0]);
+            product.put("context", entry.getKey()[1]);
+            ((List<Map<String, Object>>) res.get("map")).add(product);
+        }
+
+        res.put("context", cc.toJSON());
+
+        try {
+            return mapper.writeValueAsString(res);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "{}";
+        }
+    }
+    */
 }
 

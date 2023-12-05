@@ -1,15 +1,18 @@
 package server.model.crdts;
 
 public class PNCounter {
+    private String uid;
     private GCounter p;
     private GCounter n;
 
     public PNCounter(String id) {
+        this.uid = id;
         this.p = new GCounter(id);
         this.n = new GCounter(id);
     }
 
     public PNCounter(PNCounter counter) {
+        this.uid = counter.uid;
         this.p = new GCounter(counter.p);
         this.n = new GCounter(counter.n);
     }
@@ -50,5 +53,12 @@ public class PNCounter {
     public void join(PNCounter pnCounter) {
         p.join(pnCounter.p);
         n.join(pnCounter.n);
+    }
+
+    public void setUUID(String u_id) { {
+        this.uid = u_id;
+        this.p.setKey(u_id);
+        this.n.setKey(u_id);
+    }
     }
 }
