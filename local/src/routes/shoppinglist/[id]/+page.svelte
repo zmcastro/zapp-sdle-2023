@@ -101,6 +101,6 @@
     <button
         on:click={saveShoppingList}
         type="submit"
-        class="btn min-h-fit h-fit p-3 w-full btn-primary">Create</button
+        class="btn min-h-fit h-fit p-3 w-full btn-primary">Save</button
     >
 </div>

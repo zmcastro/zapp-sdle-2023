@@ -1,3 +1,4 @@
+import { CCounter } from "$lib/crdt/ccounter";
 import { PNCounter } from "$lib/crdt/pncounter";
 
 export class Product {
@@ -13,7 +14,7 @@ export class Product {
     constructor(name, u_id) {
         this.#uid = u_id;
         this.#name = name;
-        this.#counter = new PNCounter(u_id);
+        this.#counter = new CCounter(u_id);
     }
 
     setUUID(u_id) {
@@ -83,8 +84,7 @@ export class Product {
      */
     fromJSON(product) {
         this.#name = product.name;
-        this.#counter = new PNCounter();
-        this.#counter.setUUID(this.#uid);
+        this.#counter = new CCounter(this.#uid);
         this.#counter.fromJSON(product.counter);
     }
 

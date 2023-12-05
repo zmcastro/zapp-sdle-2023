@@ -1,10 +1,14 @@
 // Optimized Add-Wins Observed-Remove Map
 
 import { DotContext } from "../crdt/dotcontext";
-import { Product } from "../product";
 
 export class CCounter {
-    #id; // this is most likely deprecated
+    /**
+     * The unique identifier for the current user
+     * @type {string}
+     */
+    #id;
+
     /**
      * Map that stores [element_id, dot_value] => element
      */
@@ -114,12 +118,40 @@ export class CCounter {
         this.#cc.join(ccounter.getCC());
     }
 
-    fromJSON() {
+    fromJSON(counter) {
+        for (const count of counter.map) {
+            const dot = [count.name, count.context];
+
+            this.#map.set(dot, count.value);
+        }
+
+        // FIXME: this seems to be an edge case, where due to the fact that we are reconstructing a map from a JSON, we need to
+        // insert the dots in the CC, but using insertDot() won't work due to how the compacting works, there may be a better way
+        // to do this, or not it could be fine as it is as it doesn't seem to be a common issue
+        for (const dot of counter.context.cc)
+            this.#cc.getCC().set(dot[0], dot[1]);
+
+        if (counter.context.dc.length > 0)
+            for (const dot of counter.context.dc)
+                this.#cc.insertDot(dot, false);
     }
 
     toJSON() {
-    }
+        const res = {
+            map: [],
+            context: {},
+        };
 
-    toFrontendJSON() {
+        for (const [key, value] of this.#map) {
+            res.map.push({
+                name: key[0],
+                context: key[1],
+                value: value,
+            });
+        }
+
+        res.context = this.#cc.toJSON();
+
+        return res;
     }
 }

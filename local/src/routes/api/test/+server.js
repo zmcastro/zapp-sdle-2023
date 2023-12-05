@@ -117,7 +117,8 @@ export async function GET({ request }) {
 
     for (const product of sl2.getProducts().values()) {
         console.log(product.getName(), product.value());
-        console.log(product.getCounter().getP(), product.getCounter().getN());
+        // This is a debug print for PNCounters
+        // console.log(product.getCounter().getP(), product.getCounter().getN());
     }
 
     const sl3_json = {
@@ -130,28 +131,50 @@ export async function GET({ request }) {
                     name: "oranges",
                     context: "1",
                     counter: {
-                        p: [
-                            ["1", "1"],
-                            ["2", "0"],
+                        map: [
+                            {
+                                name:"1",
+                                context:"1",
+                                value:1
+                            },
+                            {
+                                name:"2",
+                                context:"2",
+                                value:1
+                            },
                         ],
-                        n: [
-                            ["1", "1"],
-                            ["2", "0"],
-                        ],
+                        context: {
+                            cc: [
+                                ["1", "1"],
+                                ["2", "2"],
+                            ],
+                            dc: [],
+                        },
                     },
                 },
                 {
                     name: "bananas",
                     context: "2",
                     counter: {
-                        p: [
-                            ["1", "0"],
-                            ["2", "3"],
+                        map: [
+                            {
+                                name:"1",
+                                context:"1",
+                                value:2
+                            },
+                            {
+                                name:"2",
+                                context:"2",
+                                value:1
+                            },
                         ],
-                        n: [
-                            ["1", "0"],
-                            ["2", "1"],
-                        ],
+                        context: {
+                            cc: [
+                                ["1", "1"],
+                                ["2", "2"],
+                            ],
+                            dc: [],
+                        },
                     },
                 },
             ],
@@ -174,8 +197,9 @@ export async function GET({ request }) {
         console.log(
             product.getName(),
             product.value(),
-            product.getCounter().getP(),
-            product.getCounter().getN(),
+            // This is a debug print for PNCounters
+            // product.getCounter().getP(),
+            // product.getCounter().getN(),
         );
     }
 
