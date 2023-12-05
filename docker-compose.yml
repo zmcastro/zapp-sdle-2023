@@ -2,24 +2,14 @@ version: '3'
 
 services:
 
-  # server-1, server-2 and server-3 are placeholders for the actual servers
-  server-1:
-    image: ealen/echo-server:latest
-    restart: always
-    environment:
-      - ENABLE__ENVIRONMENT=false
-
-  server-2:
-    image: ealen/echo-server:latest
-    restart: always
-    environment:
-      - ENABLE__ENVIRONMENT=false
-
-  server-3:
-    image: ealen/echo-server:latest
-    restart: always
-    environment:
-      - ENABLE__ENVIRONMENT=false
+  cloud:
+    build: 
+      context: ./cloud
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
 
   nginx:
     image: nginx:latest
