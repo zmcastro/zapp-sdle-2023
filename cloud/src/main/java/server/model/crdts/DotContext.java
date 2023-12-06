@@ -1,5 +1,7 @@
 package server.model.crdts;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import server.model.utils.Pair;
 
 import java.util.*;
@@ -12,6 +14,7 @@ public class DotContext {
         cc = new HashMap<>();
         dc = new HashSet<>();
     }
+
     /**
      * Get causal context (compact)
      *
@@ -129,20 +132,31 @@ public class DotContext {
         compact();
     }
 
-    /*
-    public void fromJSON(DotContext context) {
-        this.cc = context.getCC();
-        this.dc = context.getDC();
-    }
+    public JSONObject toJSON() {
+        JSONObject res = new JSONObject();
+        ArrayList<JSONArray> ccList = new ArrayList<JSONArray>();
+        ArrayList<JSONArray> dcList = new ArrayList<JSONArray>();
 
-    public Map<String, Object> toJSON() {
-        Map<String, Object> res = new HashMap<>();
-        List<Map.Entry<String, Integer>> ccList = new ArrayList<>(cc.entrySet());
+        for (Map.Entry<String, Integer> entry: cc.entrySet()) {
+            ArrayList<String> entryList = new ArrayList<String>();
+            entryList.add(entry.getKey());
+            entryList.add(String.valueOf(entry.getValue()));
 
-        res.put("cc", ccList);
-        res.put("dc", new ArrayList<>(dc));
+            ccList.add(new JSONArray(entryList));
+        }
+
+        res.put("cc", new JSONArray(ccList));
+
+        for (Pair<String, Integer> entry: dc) {
+            ArrayList<String> entryList = new ArrayList<String>();
+            entryList.add(entry.getKey());
+            entryList.add(String.valueOf(entry.getValue()));
+
+            dcList.add(new JSONArray(entryList));
+        }
+
+        res.put("dc", new JSONArray(dcList));
 
         return res;
     }
-    */
 }

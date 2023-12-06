@@ -172,29 +172,25 @@ public class AWORMap {
         }
     }
 
-    /*
-    public String toJSON() {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> res = new HashMap<>();
-        res.put("map", new ArrayList<>());
+    public JSONObject toJSON() {
+        JSONObject res = new JSONObject();
+        ArrayList<JSONObject> map = new ArrayList<JSONObject>();
         res.put("context", new HashMap<>());
 
-        for (Map.Entry<String[], Product> entry : map.entrySet()) {
-            Map<String, Object> product = entry.getValue().toJSON();
-            product.put("name", entry.getKey()[0]);
-            product.put("context", entry.getKey()[1]);
-            ((List<Map<String, Object>>) res.get("map")).add(product);
+        for (Map.Entry<Pair<String, Integer>, Product> entry : this.map.entrySet()) {
+            Product product = entry.getValue();
+            JSONObject productJSON = new JSONObject();
+            productJSON.put("name", entry.getKey().getKey());
+            productJSON.put("context", entry.getKey().getValue());
+            productJSON.put("counter", product.toJSON());
+            map.add(productJSON);
         }
 
-        res.put("context", cc.toJSON());
+        res.put("map", new JSONArray(map));
+        res.put("context", this.cc.toJSON());
 
-        try {
-            return mapper.writeValueAsString(res);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return "{}";
-        }
+        return res;
+
     }
-    */
 }
 

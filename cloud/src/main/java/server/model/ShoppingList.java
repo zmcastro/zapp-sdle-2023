@@ -12,6 +12,7 @@ public class ShoppingList {
     private String id;
     private String name;
     private AWORMap products;
+    private Boolean remove;
 
     /**
      * Constructor
@@ -93,6 +94,9 @@ public class ShoppingList {
         if (product != null && product.value() > 0) {
             product.dec(toSum);
         }
+        if (product != null && product.value() <= 0 && this.remove) {
+            this.removeProduct(productName);
+        }
     }
 
     /**
@@ -132,17 +136,17 @@ public class ShoppingList {
         JSONObject json = new JSONObject(jsonString);
         this.id = json.getString("id");
         this.name = json.getString("name");
+        this.remove = Boolean.valueOf(json.getString("remove"));
         this.products = new AWORMap();
         this.products.fromJSON(json.getString("id"), json.getJSONObject("products"));
     }
 
-    /*
     public String toJSON() {
         JSONObject res = new JSONObject();
         res.put("id", this.id);
         res.put("name", this.name);
-        res.put("products", new JSONObject(this.products.toJSON()));
+        res.put("remove", this.remove);
+        res.put("products", this.products.toJSON());
         return res.toString();
     }
-    */
 }

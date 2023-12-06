@@ -5,6 +5,9 @@ import server.model.ShoppingList;
 import server.model.crdts.CCounter;
 import server.model.crdts.GCounter;
 import server.model.crdts.PNCounter;
+import server.model.utils.Pair;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -139,11 +142,82 @@ class CRDTTest {
 
     @Test
     void testJSON() {
-        ShoppingList list = new ShoppingList("1", "test");
-        list.fromJSON("{\"id\":\"3\",\"name\":\"sl3\",\"products\":{\"map\":[{\"name\":\"oranges\",\"context\":\"1\",\"counter\":{\"p\":[[\"1\",\"1\"],[\"2\",\"0\"],],n:[[\"1\",\"1\"],[\"2\",\"0\"],],},},{\"name\":\"bananas\",\"context\":\"2\",\"counter\":{\"p\":[[\"1\",\"0\"],[\"2\",\"3\"],],\"n\":[[\"1\",\"0\"],[\"2\",\"1\"],],},},],\"context\":{\"cc\":[[\"oranges\",\"1\"],[\"bananas\",\"2\"],],\"dc\":[],},},};");
+        ShoppingList sl = new ShoppingList("1", "test");
+        String jsonString = """
+            {
+                id: "3",
+                name: "sl3",
+                remove: "true",
+                products: {
+            map: [
+            {
+                name: "oranges",
+                        context: "1",
+                    counter: {
+                map: [
+                {
+                    name:"1",
+                            context:"1",
+                        value:1
+                },
+                {
+                    name:"2",
+                            context:"2",
+                        value:1
+                },
+                        ],
+                context: {
+                    cc: [
+                                ["1", "1"],
+                                ["2", "2"],
+                            ],
+                    dc: [],
+                },
+            },
+            },
+            {
+                name: "bananas",
+                        context: "2",
+                    counter: {
+                map: [
+                {
+                    name:"1",
+                            context:"1",
+                        value:2
+                },
+                {
+                    name:"2",
+                            context:"2",
+                        value:1
+                },
+                        ],
+                context: {
+                    cc: [
+                                ["1", "1"],
+                                ["2", "2"],
+                            ],
+                    dc: [],
+                },
+            },
+            },
+            ],
+            context: {
+                cc: [
+                    ["oranges", "1"],
+                    ["bananas", "2"],
+                ],
+                dc: [],
+            },
+        },
+    }""";
+        sl.fromJSON(jsonString);
+        System.out.println(sl.getName());
+        for (Map.Entry<Pair<String, Integer>, Product> productEntry: sl.getProducts().getMap().entrySet()) {
+            System.out.println(productEntry);
+            System.out.println(productEntry.getValue().getCounter().read());
+        }
 
-        System.out.println(list.getName());
-        System.out.println(list.getProducts());
+        System.out.println(sl.toJSON());
     }
 }
 

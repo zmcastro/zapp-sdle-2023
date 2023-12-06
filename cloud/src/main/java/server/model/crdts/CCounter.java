@@ -1,12 +1,11 @@
 package server.model.crdts;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import server.model.Product;
 import server.model.utils.Pair;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CCounter {
 
@@ -16,6 +15,10 @@ public class CCounter {
 
     public CCounter(String id) {
         this.id = id;
+    }
+
+    public CCounter() {
+
     }
 
     public Map<Pair<String, Integer>, Integer> getMap() {
@@ -105,9 +108,44 @@ public class CCounter {
         cc.join(ccounter.getCC());
     }
 
-    public void fromJSON() {
+    public void fromJSON(JSONObject json) {
+
+        for (Object product : json.getJSONArray("map")) {
+            JSONObject jProduct = (JSONObject) product;
+            Pair<String, Integer> dot = new Pair<>(jProduct.getString("name"), jProduct.getInt("context"));
+
+            map.put(dot, (Integer) jProduct.get("value"));
+        }
+
+        for (Object dot : json.getJSONObject("context").getJSONArray("cc")) {
+            JSONArray jDot = (JSONArray) dot;
+            cc.getCC().put(jDot.getString(0), jDot.getInt(1)); // CHECKME
+        }
+
+        if (!json.getJSONObject("context").getJSONArray("dc").isEmpty()) {
+            for (Object dot : json.getJSONObject("context").getJSONArray("dc")) {
+                JSONArray jDot = (JSONArray) dot;
+                Pair<String, Integer> pairDot = new Pair<>(jDot.getString(0), jDot.getInt(1));
+                cc.insertDot(pairDot, false);
+                // TESTME
+            }
+        }
     }
 
-    public void toJSON() {
+    public JSONObject toJSON() {
+        JSONObject res = new JSONObject();
+        ArrayList<JSONObject> map = new ArrayList<JSONObject>();
+
+        for (Map.Entry<Pair<String, Integer>, Integer> entry : this.map.entrySet()) {
+            JSONObject productJSON = new JSONObject();
+            productJSON.put("name", entry.getKey().getKey());
+            productJSON.put("context", entry.getKey().getValue());
+            productJSON.put("value", entry.getValue());
+            map.add(productJSON);
+        }
+
+        res.put("context", this.cc.toJSON());
+
+        return res;
     }
 }

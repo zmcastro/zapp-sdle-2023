@@ -88,6 +88,11 @@ public class Product {
         /* test: { \"name\" : \"ShopList\", \"counter\" : \"18\" } */
 
         this.name = json.getString("name");
-        // this.counter = new PNCounter(json.get("counter"));
+        this.counter = new CCounter();
+        this.counter.fromJSON((JSONObject) json.get("counter"));
+    }
+
+    public JSONObject toJSON() {
+        return this.counter.toJSON();
     }
 }
