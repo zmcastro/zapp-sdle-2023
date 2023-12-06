@@ -50,7 +50,6 @@
     };
 
     const showAlert = () => {
-        console.log("hidfhaiodfaksdjf");
         show = true;
         setTimeout(() => {
             show = false;
@@ -103,9 +102,7 @@
 
 <div
     role="alert"
-    class="alert alert-success absolute bottom-2 right-2 w-fit opacity-{show
-        ? 100
-        : 0} transition-opacity bg-primary text-white"
+    class="alert alert-success absolute bottom-2 right-2 w-fit {show ? "opacity-100" : "opacity-0"} transition-opacity bg-primary text-white"
 >
     <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +116,7 @@
             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
         /></svg
     >
-    <span>Your purchase has been confirmed!</span>
+    <span>ID coppied to clipboard!</span>
 </div>
 
 <div class="flex flex-row items-center gap-4">
