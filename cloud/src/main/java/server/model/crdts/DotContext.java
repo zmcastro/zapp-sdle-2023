@@ -5,17 +5,21 @@ import server.model.utils.Pair;
 import java.util.*;
 
 public class DotContext {
-    private Map<String, Integer> cc = new HashMap<>();
-    private Set<Pair<String, Integer>> dc = new HashSet<>();
+    private Map<String, Integer> cc;
+    private Set<Pair<String, Integer>> dc;
 
+    public DotContext() {
+        cc = new HashMap<>();
+        dc = new HashSet<>();
+    }
     /**
      * Get causal context (compact)
      *
      * @return Causal context
      */
-<<<<<<< HEAD
     public Set<Pair<String, Integer>> getDC() {
         return dc;
+    }
     public Map<String, Integer> getCC() {
         return cc;
     }

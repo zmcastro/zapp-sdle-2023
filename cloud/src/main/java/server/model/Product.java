@@ -1,15 +1,13 @@
 package server.model;
 
 import org.json.JSONObject;
-
-import org.json.JSONObject;
-import server.model.crdts.PNCounter;
+import server.model.crdts.CCounter;
 
 public class Product {
 
     public String uid;
     public String name;
-    public PNCounter counter;
+    public CCounter counter;
 
     /**
      *
@@ -19,7 +17,7 @@ public class Product {
     public Product(String name, String u_id) {
         this.uid = u_id;
         this.name = name;
-        this.counter = new PNCounter(u_id);
+        this.counter = new CCounter(u_id);
     }
 
     /**
@@ -36,13 +34,22 @@ public class Product {
      *
      * @return Product amount
      */
-    public int getCounter() {
-        return counter.read();
+    public CCounter getCounter() {
+        return counter;
     }
 
-    public void setUUID(String u_id) {
+    public void setID(String u_id) {
         this.uid = u_id;
-        this.counter.setUUID(u_id);
+        this.counter.setID(u_id);
+    }
+
+    /**
+     * Get product amount
+     *
+     * @return  {Number} Product amount
+     */
+    public int value() {
+        return this.counter.read();
     }
 
     /**

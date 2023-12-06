@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class CCounter {
-    private String id; // this is most likely deprecated
+
+    private String id; // unique user identifier
     private Map<Pair<String, Integer>, Integer> map = new HashMap<>();
     private DotContext cc = new DotContext();
 
@@ -74,19 +75,22 @@ public class CCounter {
     public boolean hasKey(Pair<String, Integer> key) {
         for (Map.Entry<Pair<String, Integer>, Integer> entry : map.entrySet()) {
             Pair<String, Integer> _key = entry.getKey();
-            if (_key.equals(key)) // CHECKME: equals might not be working as intended :p
+            System.out.println(key + " == " + _key + "?");
+            if (_key.equals(key)) {
+                System.out.println("Yea!!");
                 return true;
+            }
+            System.out.println("Nope!!");
         }
         return false;
     }
 
     public void join(CCounter ccounter) {
-        Iterator<Map.Entry<Pair<String, Integer>, Integer>> iterator = map.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Pair<String, Integer>, Integer> entry = iterator.next();
+        for (Map.Entry<Pair<String, Integer>, Integer> entry : map.entrySet()) {
             Pair<String, Integer> key = entry.getKey();
-            if (!ccounter.hasKey(key) || !ccounter.getCC().dotIn(key)) {
-                iterator.remove();
+            int value = entry.getValue();
+            if (!ccounter.hasKey(key) && ccounter.getCC().dotIn(key)) {
+                map.remove(key, value);
             }
         }
 
@@ -102,14 +106,8 @@ public class CCounter {
     }
 
     public void fromJSON() {
-        // Implement your logic for deserialization from JSON
     }
 
     public void toJSON() {
-        // Implement your logic for serialization to JSON
-    }
-
-    public void toFrontendJSON() {
-        // Implement your logic for converting to JSON for the frontend
     }
 }

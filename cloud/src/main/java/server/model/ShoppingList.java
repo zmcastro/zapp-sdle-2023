@@ -18,8 +18,9 @@ public class ShoppingList {
      *
      * @param id Shopping list identifier
      */
-    public ShoppingList(String id) {
+    public ShoppingList(String id, String name) {
         this.id = id;
+        this.name = name;
         this.products = new AWORMap();
     }
 
@@ -46,8 +47,8 @@ public class ShoppingList {
      *
      * @return Products list
      */
-    public Iterator<Product> getProducts() {
-        return products.values();
+    public AWORMap getProducts() {
+        return products;
     }
 
     /**
@@ -62,10 +63,36 @@ public class ShoppingList {
     /**
      * Remove a product from the shopping list
      *
-     * @param product Product to be removed
+     * @param productName Name of the product to be removed
      */
-    public void removeProduct(Product product) {
-        products.rm(product.getName());
+    public void removeProduct(String productName) {
+        products.rm(productName);
+    }
+
+    /**
+     * Increment product amount
+     *
+     * @param {String} product_name
+     * @param {Number} tosum
+     */
+    public void incProduct(String productName, int toSum) {
+        Product product = this.products.get(productName);
+        if (product != null && product.value() >= 0) {
+            product.inc(toSum);
+        }
+    }
+
+    /**
+     * Decrement product amount
+     *
+     * @param {String} product_name
+     * @param {Number} tosum
+     */
+    public void decProduct(String productName, int toSum) {
+        Product product = this.products.get(productName);
+        if (product != null && product.value() > 0) {
+            product.dec(toSum);
+        }
     }
 
     /**
@@ -78,7 +105,7 @@ public class ShoppingList {
         products.join(shoppingList.products);
 
         // Join counters
-        for (Map.Entry<Pair<String, Integer>, Product> entry : products.elements()) {
+        for (Map.Entry<Pair<String, Integer>, Product> entry : products.entries()) {
             Product newProduct = shoppingList.get(entry.getKey().getKey()); // gets the element_id
             if (newProduct != null) {
                 entry.getValue().join(newProduct);
@@ -99,7 +126,7 @@ public class ShoppingList {
     /**
      * Create a Shopping List from a JSON object
      *
-     * @param String JSON object
+     * @param jsonString JSON string received
      */
     public void fromJSON(String jsonString) {
         JSONObject json = new JSONObject(jsonString);

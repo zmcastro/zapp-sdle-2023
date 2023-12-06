@@ -60,11 +60,4 @@ public class PNCounter {
         p.join(pnCounter.p);
         n.join(pnCounter.n);
     }
-
-    public void setUUID(String u_id) { {
-        this.uid = u_id;
-        this.p.setKey(u_id);
-        this.n.setKey(u_id);
-    }
-    }
 }

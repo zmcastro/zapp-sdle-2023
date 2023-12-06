@@ -2,14 +2,12 @@ package server.model.crdts;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import server.model.Product;
 import server.model.utils.Pair;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import server.model.Product;
+import server.model.crdts.DotContext;
+
+import java.util.*;
 
 public class AWORMap {
     private String id; // This is most likely deprecated
@@ -22,13 +20,9 @@ public class AWORMap {
      */
     private DotContext cc;
 
-    /**
-     * Constructor with an identifier
-     *
-     * @param id Identifier
-     */
     public AWORMap() {
         map = new HashMap<>();
+        cc = new DotContext();
     }
 
     /**
@@ -54,8 +48,12 @@ public class AWORMap {
      *
      * @return Set of map entries
      */
-    public Set<Map.Entry<Pair<String, Integer>, Product>> elements() {
+    public Set<Map.Entry<Pair<String, Integer>, Product>> entries() {
         return map.entrySet();
+    }
+
+    public Set<Pair<String, Integer>> elements() {
+        return map.keySet();
     }
 
     /**
@@ -63,19 +61,19 @@ public class AWORMap {
      *
      * @return Iterator of values
      */
-    public Iterator<Product> values() {
+    public Collection<Product> values() {
         Map<Pair<String, Integer>, Product> filteredMap = new HashMap<>();
         Map<String, Integer> context = cc.getCC();
 
         for (Map.Entry<Pair<String, Integer>, Product> entry : map.entrySet()) {
             Pair<String, Integer> key = entry.getKey();
             Product value = entry.getValue();
-            // if causal context contains element_id and its associated pr
-            if (cc.getCC().containsKey(key.getKey()) && cc.getCC().get(key.getKey()) == key.getValue()) {
+            // if context contains element_id
+            if (cc.getCC().containsKey(key.getKey()) && cc.getCC().get(key.getKey()).equals(key.getValue())) {
                 filteredMap.put(key, value);
             }
         }
-        return filteredMap.values().iterator();
+        return filteredMap.values();
     }
 
     /**
@@ -160,15 +158,16 @@ public class AWORMap {
         }
 
         for (Object dot : products.getJSONObject("context").getJSONArray("cc")) {
-            JSONObject jDot = (JSONObject) dot;
-
-             // cc.getCC().put(dot[0], dot[1]); CHECKME
+            JSONArray jDot = (JSONArray) dot;
+            cc.getCC().put(jDot.getString(0), jDot.getInt(1)); // CHECKME
         }
 
         if (!products.getJSONObject("context").getJSONArray("dc").isEmpty()) {
             for (Object dot : products.getJSONObject("context").getJSONArray("dc")) {
-                JSONObject jDot = (JSONObject) dot;
-                // cc.insertDot(dot, false);
+                JSONArray jDot = (JSONArray) dot;
+                Pair<String, Integer> pairDot = new Pair<>(jDot.getString(0), jDot.getInt(1));
+                cc.insertDot(pairDot, false);
+                // TESTME
             }
         }
     }
