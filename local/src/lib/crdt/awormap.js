@@ -60,7 +60,7 @@ export class AWORMap {
 
     /**
      * Returns a map of the elements that are in the causal context
-     * 
+     *
      * DEPRECATED: #map is now correct
      *
      * @returns {Map} elements
@@ -99,7 +99,7 @@ export class AWORMap {
         for (const [key, value] of this.#map) {
             if (key[0] == element_id) {
                 this.#map.delete(key);
-            } 
+            }
         }
     }
 
@@ -113,13 +113,18 @@ export class AWORMap {
     /**
      * Checks if [key,value] is in the map
      * Note: I'm aware this is preposterous code but apparently two arrays ["banana", 1] and ["banana", 1] are not equal
-     * 
-     * @param {Array} key 
+     *
+     * @param {Array} key
      * @returns {Boolean}
      */
     hasKey(key) {
         for (const [_key, value] of this.#map) {
-            console.log(_key, key, value, _key[0] == key[0] && _key[1] == key[1]);
+            console.log(
+                _key,
+                key,
+                value,
+                _key[0] == key[0] && _key[1] == key[1],
+            );
             if (_key[0] == key[0] && _key[1] == key[1]) return true;
         }
         return false;
@@ -134,7 +139,7 @@ export class AWORMap {
         this.#map = new Map(
             [...this.#map].filter(
                 ([key, value]) =>
-                    awormap.hasKey(key) || !awormap.getCC().dotIn(key)
+                    awormap.hasKey(key) || !awormap.getCC().dotIn(key),
             ),
         );
 

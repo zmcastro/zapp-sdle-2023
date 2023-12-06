@@ -44,8 +44,7 @@
     const toggleRemove = () => {
         remove = !remove;
         shoppinglist.setRemove(remove);
-    }
-
+    };
 </script>
 
 <h1 class="font-bold w-fit">Create a new shopping list</h1>
@@ -60,8 +59,13 @@
     />
     <div class="form-control gap-4">
         <label class="label cursor-pointer">
-            <span class="label-text pr-3">Remove item when count is 0</span> 
-            <input type="checkbox" class="toggle" checked={remove} on:change={() => toggleRemove()} />
+            <span class="label-text pr-3">Remove item when count is 0</span>
+            <input
+                type="checkbox"
+                class="toggle"
+                checked={remove}
+                on:change={() => toggleRemove()}
+            />
         </label>
     </div>
 

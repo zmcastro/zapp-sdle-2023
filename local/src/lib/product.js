@@ -19,7 +19,7 @@ export class Product {
 
     setUUID(u_id) {
         this.#uid = u_id;
-        this.#counter.setUUID(u_id);
+        this.#counter.setID(u_id);
     }
 
     /**

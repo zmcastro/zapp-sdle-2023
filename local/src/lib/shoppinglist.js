@@ -105,7 +105,8 @@ export class ShoppingList {
     decProduct(product_name, tosum = 1) {
         const product = this.#products.get(product_name);
         if (product && product.value() > 0) product.dec(tosum);
-        if (product && product.value() <= 0 && this.#remove) this.removeProduct(product_name);
+        if (product && product.value() <= 0 && this.#remove)
+            this.removeProduct(product_name);
     }
 
     /**

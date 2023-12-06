@@ -133,14 +133,14 @@ export async function GET({ request }) {
                     counter: {
                         map: [
                             {
-                                name:"1",
-                                context:"1",
-                                value:1
+                                name: "1",
+                                context: "1",
+                                value: 1,
                             },
                             {
-                                name:"2",
-                                context:"2",
-                                value:1
+                                name: "2",
+                                context: "2",
+                                value: 1,
                             },
                         ],
                         context: {
@@ -158,14 +158,14 @@ export async function GET({ request }) {
                     counter: {
                         map: [
                             {
-                                name:"1",
-                                context:"1",
-                                value:2
+                                name: "1",
+                                context: "1",
+                                value: 2,
                             },
                             {
-                                name:"2",
-                                context:"2",
-                                value:1
+                                name: "2",
+                                context: "2",
+                                value: 1,
                             },
                         ],
                         context: {
@@ -219,7 +219,7 @@ export async function GET({ request }) {
     cc2.inc(2);
 
     console.log(cc1.read(), cc2.read());
-    
+
     cc2.setID("2");
     cc1.inc(1);
     cc2.dec(2);
@@ -227,16 +227,16 @@ export async function GET({ request }) {
     console.log(cc1.read(), cc2.read());
 
     console.log("cc1", cc1.read(), cc1.getMap(), cc1.getCC().getCC());
-    console.log("cc2",cc2.read(), cc2.getMap(), cc2.getCC().getCC());
+    console.log("cc2", cc2.read(), cc2.getMap(), cc2.getCC().getCC());
     cc1.join(cc2);
-    console.log("cc1",cc1.read(), cc1.getMap(), cc1.getCC().getCC());
-    
+    console.log("cc1", cc1.read(), cc1.getMap(), cc1.getCC().getCC());
+
     console.log("------------------");
 
     cc3.dec(2);
     cc3.join(cc1);
 
-    console.log("cc3",cc3.read(), cc3.getMap(), cc3.getCC().getCC());
+    console.log("cc3", cc3.read(), cc3.getMap(), cc3.getCC().getCC());
 
     return new Response(JSON.stringify(sl3.toJSON()));
 }

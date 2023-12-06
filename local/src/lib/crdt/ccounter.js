@@ -52,7 +52,8 @@ export class CCounter {
     inc(value = 1) {
         let base = 0;
         for (const [key, _value] of this.#map) {
-            if (key[0] == this.#id) { // Should only ever be one
+            if (key[0] == this.#id) {
+                // Should only ever be one
                 base = Math.max(base, _value);
                 this.#map.delete(key);
             }
@@ -65,7 +66,8 @@ export class CCounter {
         if (this.read() - value < 0) return;
         let base = 0;
         for (const [key, _value] of this.#map) {
-            if (key[0] == this.#id) { // Should only ever be one
+            if (key[0] == this.#id) {
+                // Should only ever be one
                 base = Math.max(base, _value);
                 this.#map.delete(key);
             }
@@ -85,9 +87,9 @@ export class CCounter {
     /**
      * Checks if [key,value] is in the map
      * Note: I'm aware this is preposterous code but apparently two arrays ["banana", 1] and ["banana", 1] are not equal
-     * 
-     * @param {Array} key 
-     * @returns 
+     *
+     * @param {Array} key
+     * @returns
      */
     hasKey(key) {
         for (const [_key, value] of this.#map) {
@@ -105,7 +107,7 @@ export class CCounter {
         this.#map = new Map(
             [...this.#map].filter(
                 ([key, value]) =>
-                ccounter.hasKey(key) || !ccounter.getCC().dotIn(key)
+                    ccounter.hasKey(key) || !ccounter.getCC().dotIn(key),
             ),
         );
 
