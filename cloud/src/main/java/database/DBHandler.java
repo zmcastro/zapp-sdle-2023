@@ -15,7 +15,7 @@ public class DBHandler {
     private static final String JSON_DIRECTORY = "src/main/java/database/";
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-    public String getFile(String node, Long id) throws IOException {
+    public String getFile(String node, String id) throws IOException {
         List<String> nodes = getNodes(node);
         String filePath;
 
@@ -46,7 +46,7 @@ public class DBHandler {
         }
     }
 
-    public void storeFile(String node, Long id, String jsonData) throws IOException {
+    public void storeFile(String node, String id, String jsonData) throws IOException {
         List<String> nodes = getNodes(node);
         String filePath;
 

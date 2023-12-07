@@ -1,5 +1,66 @@
-<<<<<<< HEAD
-{"id": 1, "name": "works??", "products": []}
-=======
-{"id": 2, "name": "works?", "products": []}
->>>>>>> ac2ed4d (use consistent hashing to store data in correct database folder)
+{
+  "id": "1",
+  "name": "sl1",
+  "remove": "true",
+  "products": {
+    "map": [
+      {
+        "name": "oranges",
+        "context": "1",
+        "counter": {
+          "map": [
+            {
+              "name": "1",
+              "context": "1",
+              "value": 1
+            },
+            {
+              "name": "2",
+              "context": "2",
+              "value": 1
+            }
+          ],
+          "context": {
+            "cc": [
+              ["1", "1"],
+              ["2", "2"]
+            ],
+            "dc": []
+          }
+        }
+      },
+      {
+        "name": "bananas",
+        "context": "2",
+        "counter": {
+          "map": [
+            {
+              "name": "1",
+              "context": "1",
+              "value": 2
+            },
+            {
+              "name": "2",
+              "context": "2",
+              "value": 1
+            }
+          ],
+          "context": {
+            "cc": [
+              ["1", "1"],
+              ["2", "2"]
+            ],
+            "dc": []
+          }
+        }
+      }
+    ],
+    "context": {
+      "cc": [
+        ["oranges", "1"],
+        ["bananas", "2"]
+      ],
+      "dc": []
+    }
+  }
+}

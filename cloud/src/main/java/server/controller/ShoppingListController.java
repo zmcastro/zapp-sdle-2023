@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ConsistentHashing.ConsistentHashing;
+import server.model.ShoppingList;
 
 @RestController
 @RequestMapping("/")
@@ -19,8 +20,8 @@ public class ShoppingListController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getShoppingList(@PathVariable Long id) {
-        String node = consistentHashing.getNode(String.valueOf(id));
+    public ResponseEntity<String> getShoppingList(@PathVariable String id) {
+        String node = consistentHashing.getNode(id);
         try {
             String data = dbHandler.getFile(node, id);
             return ResponseEntity.ok(data);
@@ -30,17 +31,35 @@ public class ShoppingListController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateShoppingList(@PathVariable Long id, @RequestBody String jsonData) {
+    public ResponseEntity<String> updateShoppingList(@PathVariable String id, @RequestBody String jsonData) {
 
-        // json from DB
-        // json to Shopping List
-        // jsonData to Shopping List
-        // merge
-        // Shopping list to json
+        String node = consistentHashing.getNode(id);
 
-        String node = consistentHashing.getNode(String.valueOf(id));
+        String storedShoppingList;
+
         try {
-            dbHandler.storeFile(node, id, jsonData);
+            storedShoppingList = dbHandler.getFile(node, id);
+        } catch (Exception e) {
+            try {
+                dbHandler.storeFile(node, id, jsonData);
+                return ResponseEntity.ok("Shopping List with ID " + id + " stored successfully");
+            } catch (Exception e1) {
+                return ResponseEntity.status(500).body("Error storing Shopping List with ID: " + id);
+            }
+        }
+
+        ShoppingList oldShoppingList = new ShoppingList(id, "old"); // id and name will be replaced
+        ShoppingList newShoppingList = new ShoppingList(id, "new"); // id and name will be replaced
+
+        oldShoppingList.fromJSON(storedShoppingList);
+        newShoppingList.fromJSON(jsonData);
+
+        oldShoppingList.join(newShoppingList);
+
+        String mergedList = oldShoppingList.toJSON();
+
+        try {
+            dbHandler.storeFile(node, id, mergedList);
             return ResponseEntity.ok("Shopping List with ID " + id + " stored successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error storing Shopping List with ID: " + id);
