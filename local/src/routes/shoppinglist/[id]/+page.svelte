@@ -44,9 +44,21 @@
         updateShoppingList();
     };
 
-    const saveShoppingList = () => {
+    const saveShoppingList = async () => {
+        // Save locally
         set(shoppinglist.getID(), shoppinglist.toJSON());
-        // TODO: Save it to the cloud
+
+        // Save to cloud
+        const res = await fetch(`http://localhost:9999/${data.id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(shoppinglist.toJSON()),
+        });
+
+        // TODO: Handle errors and display them
+        console.log(res);
     };
 
     const showAlert = () => {

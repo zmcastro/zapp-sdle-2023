@@ -20,8 +20,9 @@ public class ShoppingListController {
     }
 
     @GetMapping("/{id}")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<String> getShoppingList(@PathVariable String id) {
-        String node = consistentHashing.getNode(id);
+        String node = consistentHashing.getNode(String.valueOf(id));
         try {
             String data = dbHandler.getFile(node, id);
             return ResponseEntity.ok(data);
@@ -31,6 +32,7 @@ public class ShoppingListController {
     }
 
     @PutMapping("/{id}")
+    @CrossOrigin(origins = "*")
     public ResponseEntity<String> updateShoppingList(@PathVariable String id, @RequestBody String jsonData) {
 
         String node = consistentHashing.getNode(id);
