@@ -144,6 +144,7 @@ public class CCounter {
             map.add(productJSON);
         }
 
+        res.put("map", new JSONArray(map));
         res.put("context", this.cc.toJSON());
 
         return res;

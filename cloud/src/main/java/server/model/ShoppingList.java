@@ -145,7 +145,7 @@ public class ShoppingList {
         JSONObject res = new JSONObject();
         res.put("id", this.id);
         res.put("name", this.name);
-        res.put("remove", this.remove);
+        res.put("remove", this.remove.toString());
         res.put("products", this.products.toJSON());
         return res.toString();
     }
