@@ -136,7 +136,7 @@ public class ShoppingList {
         JSONObject json = new JSONObject(jsonString);
         this.id = json.getString("id");
         this.name = json.getString("name");
-        this.remove = Boolean.valueOf(json.getString("remove"));
+        this.remove = json.getBoolean("remove");
         this.products = new AWORMap();
         this.products.fromJSON(json.getString("id"), json.getJSONObject("products"));
     }

@@ -49,16 +49,19 @@
         set(shoppinglist.getID(), shoppinglist.toJSON());
 
         // Save to cloud
-        const res = await fetch(`http://localhost:9999/${data.id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(shoppinglist.toJSON()),
-        });
+        try {
+            const res = await fetch(`http://localhost:9999/${data.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(shoppinglist.toJSON()),
+            });
 
-        // TODO: Handle errors and display them
-        console.log(res);
+            window.location.href = "/";
+        } catch {
+            window.location.href = "/";
+        }
     };
 
     const showAlert = () => {
@@ -71,14 +74,14 @@
     let show = false;
 </script>
 
-<div class="grid grid-cols-3 items-center content-center">
+<div class="grid grid-cols-3 items-center content-center gap-4">
     <h1 class="font-bold text-xl col-start-2 self-center mx-auto">
         {representation.name}
     </h1>
     <button
         use:copy={shoppinglist.getID()}
         on:svelte-copy={() => showAlert()}
-        class="btn btn-ghost"
+        class="btn btn-ghost w-fit"
     >
         <svg
             width="24px"
@@ -187,6 +190,6 @@
     <button
         on:click={saveShoppingList}
         type="submit"
-        class="btn min-h-fit h-fit p-3 w-full btn-primary">Save</button
+        class="btn min-h-fit h-fit p-3 w-full btn-primary">Push to cloud</button
     >
 </div>

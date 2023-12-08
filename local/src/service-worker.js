@@ -36,10 +36,8 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
     // ignore POST requests etc
     if (event.request.method !== "GET") {
+        console.log("hihihihihi");
         console.log("caught non-GET request");
-        // set("hello", "world")
-        //     .then(() => console.log("It worked!"))
-        //     .catch((err) => console.log("It failed!", err));
         return;
     }
 

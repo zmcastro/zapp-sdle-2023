@@ -68,7 +68,7 @@ export class CCounter {
         for (const [key, _value] of this.#map) {
             if (key[0] == this.#id) {
                 // Should only ever be one
-                base = Math.max(base, _value);
+                base = base >= Math.abs(_value) ? base : _value;
                 this.#map.delete(key);
             }
         }

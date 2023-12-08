@@ -3,7 +3,6 @@ import { ShoppingList } from "$lib/shoppinglist.js";
 export const ssr = false;
 
 export async function load({ fetch, params }) {
-    // Simulate receiving a JSON ShoppingList
     const id = uuidv4();
     const name = "New Shopping List";
     let sl = new ShoppingList(id, name, false);

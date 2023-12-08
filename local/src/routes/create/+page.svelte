@@ -35,10 +35,23 @@
         products = shoppinglist.toFrontendJSON().products;
     };
 
-    const saveShoppingList = () => {
+    const saveShoppingList = async () => {
         shoppinglist.setName(shoppingListName);
         set(shoppinglist.getID(), shoppinglist.toJSON());
-        // TODO: Save it to the cloud
+
+        // Save to cloud
+        try {
+            const res = await fetch(`http://localhost:9999/${shoppinglist.getID()}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(shoppinglist.toJSON()),
+            });        
+            window.location.href = "/";
+        } catch {
+            window.location.href = "/";
+        }
     };
 
     const toggleRemove = () => {

@@ -18,6 +18,17 @@ export class DotContext {
     }
 
     /**
+     * Get dot cloud
+     *
+     * @returns {Set} dot cloud
+     */
+    getDC() {
+        const res = this.#dc;
+        return res;
+    }
+    
+
+    /**
      * Check if key-value pair in causal context (compact or dot cloud)
      *
      * @param {Array} dot - Tuple [key, value]
@@ -118,14 +129,14 @@ export class DotContext {
                 : this.#cc.set(key, value);
 
         // add dots of otherDC to this
-        for (const dot of dotcontext.getCC()) this.insertDot(dot, false);
+        for (const dot of dotcontext.getDC()) this.insertDot(dot, false);
 
         this.compact();
     }
 
     fromJSON(context) {
-        this.#cc = context.cc;
-        this.#dc = context.dc;
+        for (const [key, value] of context.cc) this.#cc.set(key, parseInt(value));
+        for (const dot of context.dc) this.#dc.add(dot);
     }
 
     toJSON() {
