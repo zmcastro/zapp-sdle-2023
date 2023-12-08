@@ -137,28 +137,35 @@
 {#if representation.products.length > 0}
     <div class="flex flex-col gap-4">
         {#each representation.products as product}
-            <div class="card w-96 bg-base-100 shadow-xl">
-                <div class="card-body flex-row justify-between p-3">
-                    <h2 class="card-title font-medium text-lg truncate">
-                        {product.name}
-                    </h2>
-                    <div>
-                        <button
-                            disabled={product.count == 0}
-                            on:click={() => decProduct(product.name)}
-                            class="btn btn-ghost disabled:bg-inherit">-</button
-                        >
-                        <span class="font-bold">{product.count}</span>
-                        <button
-                            on:click={() => incProduct(product.name)}
-                            class="btn btn-ghost">+</button
-                        >
-                        <button
-                            on:click={() => removeProduct(product.name)}
-                            class="btn btn-ghost">X</button
-                        >
+            <div class="relative flex flex-row">
+                <div class="card w-96 bg-base-100 shadow-xl">
+                    <div class="card-body flex-row justify-between p-3">
+                        <h2 class="card-title font-medium text-lg truncate">
+                            {product.name}
+                        </h2>
+                        <div>
+                            <button
+                                disabled={product.count == 0}
+                                on:click={() => decProduct(product.name)}
+                                class="btn btn-ghost disabled:bg-inherit">-</button
+                            >
+                            <span class="font-bold">{product.count}</span>
+                            <button
+                                on:click={() => incProduct(product.name)}
+                                class="btn btn-ghost">+</button
+                            >
+                            <button
+                                on:click={() => removeProduct(product.name)}
+                                class="btn btn-ghost">X</button
+                            >
+                        </div>
                     </div>
                 </div>
+                {#if product.count < 0}
+                    <div class="tooltip tooltip-top absolute text-primary -right-9 top-[calc(50%-12px)]" data-tip="It seems there are too many products">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    </div>
+                {/if}
             </div>
         {/each}
     </div>
