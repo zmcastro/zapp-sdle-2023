@@ -1,6 +1,10 @@
 import org.springframework.context.ConfigurableApplicationContext;
-import server.Server;
+import overwatch.Overwatch;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class App {
@@ -16,17 +20,32 @@ public class App {
             System.out.println("No arguments provided. Using default server count.");
         }
 
+        Overwatch o = new Overwatch();
+        o.setPort(8080);
+        ConfigurableApplicationContext oContext = o.run();
+
         for (int i = 0; i < nServers; i++) {
-            Server s = new Server();
-            s.setPort(8080 + i);
-            ConfigurableApplicationContext context = s.run();
-            System.out.println("After run");
-            servers.add(context);
+            createServer();
         }
 
-        for (ConfigurableApplicationContext server : servers) {
-            System.out.println("server.isActive() = " + server.isActive());
-            System.out.println("port = " + server.getBean("getPort"));
+
+    }
+
+    private static void createServer() {
+        try {
+            String apiUrl = "http://localhost:8080/add";
+
+            URL url = new URL(apiUrl);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("PUT");
+
+            int responseCode = connection.getResponseCode();
+            System.out.println("Response Code: " + responseCode);
+            connection.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
