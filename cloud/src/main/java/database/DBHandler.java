@@ -197,10 +197,8 @@ public class DBHandler {
         NodesWriteLock.writeLock().lock();
         if (listNodes().size() <= 3){
             NodesWriteLock.writeLock().unlock();
-            throw new RemoteException("Minimum number of database nodes");
+            throw new RuntimeException("Minimum number of database nodes");
         }
-        List<String> adjacent = this.getAdjacentNodes(node);
-        this.consistentHashing.removeNode(node);
         try {
             String folderPath = JSON_DIRECTORY + node;
 
@@ -225,6 +223,27 @@ public class DBHandler {
 
                 System.out.println(allLists);
 
+                Map<String, String> reallocate = new TreeMap<String, String>();
+
+                for (String l: allLists){
+                    if (this.getAdjacentNodes(node).contains(consistentHashing.getNode(l))){ // need to reallocate
+                        final String[] fileContent = {null};
+                        // delete previously stored
+                        Files.walkFileTree(Paths.get(JSON_DIRECTORY), new SimpleFileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                String fileNameWithoutExtension = file.getFileName().toString().replaceFirst("[.][^.]+$", "");
+                                if (fileNameWithoutExtension.equals(l) && file.toString().endsWith(".json")) {
+                                    fileContent[0] = new String(Files.readAllBytes(file));
+                                    Files.delete(file);
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+                        reallocate.put(l, fileContent[0]);
+                    }
+                }
+
                 // delete the folder
                 Files.walkFileTree(Paths.get(folderPath), new SimpleFileVisitor<Path>() {
                     @Override
@@ -246,24 +265,10 @@ public class DBHandler {
                     }
                 });
 
-                for (String l: allLists){
-                    if (adjacent.contains(consistentHashing.getNode(l))){ // need to reallocate
-                        final String[] fileContent = {null};
-                        // delete previously stored
-                        Files.walkFileTree(Paths.get(JSON_DIRECTORY), new SimpleFileVisitor<Path>() {
-                            @Override
-                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                                String fileNameWithoutExtension = file.getFileName().toString().replaceFirst("[.][^.]+$", "");
-                                if (fileNameWithoutExtension.equals(l) && file.toString().endsWith(".json")) {
-                                    fileContent[0] = new String(Files.readAllBytes(file));
-                                    Files.delete(file);
-                                }
-                                return FileVisitResult.CONTINUE;
-                            }
-                        });
+                this.consistentHashing.removeNode(node);
 
-                        this.storeFile(this.consistentHashing.getNode(l), l, fileContent[0]); // store in correct nodes
-                    }
+                for (String key: reallocate.keySet()){
+                    this.storeFile(this.consistentHashing.getNode(key), key, reallocate.get(key)); // store in correct nodes
                 }
 
 
