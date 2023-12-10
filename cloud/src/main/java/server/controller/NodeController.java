@@ -60,7 +60,10 @@ public class NodeController {
     public ResponseEntity<String> removeNode(@PathVariable String node){
         try {
             List<String> currentNodes = dbHandler.listNodes();
-            if (currentNodes.contains(node)){
+            if (currentNodes.size() <= 3){
+                return ResponseEntity.status(500).body("Unable to remove node with name: " + node + "; Cannot have less than 3 database nodes");
+            }
+            if (!currentNodes.contains(node)){
                 return ResponseEntity.status(500).body("Unable to remove node with name: " + node + "; Node does not exist");
             }
         }
