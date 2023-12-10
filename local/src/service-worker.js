@@ -19,7 +19,11 @@ self.addEventListener("install", (event) => {
     event.waitUntil(addFilesToCache());
 
     const uuid = uuidv4();
-    set("uuid", uuid);
+    get("uuid").then((val) => {
+        if (val === undefined) {
+            set("uuid", uuid);
+        }
+    });
 });
 
 self.addEventListener("activate", (event) => {
@@ -36,7 +40,6 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
     // ignore POST requests etc
     if (event.request.method !== "GET") {
-        console.log("hihihihihi");
         console.log("caught non-GET request");
         return;
     }

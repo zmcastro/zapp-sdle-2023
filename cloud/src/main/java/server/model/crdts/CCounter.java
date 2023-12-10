@@ -89,11 +89,12 @@ public class CCounter {
     }
 
     public void join(CCounter ccounter) {
-        for (Map.Entry<Pair<String, Integer>, Integer> entry : map.entrySet()) {
+        Iterator<Map.Entry<Pair<String, Integer>, Integer>> iterator = map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Pair<String, Integer>, Integer> entry = iterator.next();
             Pair<String, Integer> key = entry.getKey();
-            int value = entry.getValue();
             if (!ccounter.hasKey(key) && ccounter.getCC().dotIn(key)) {
-                map.remove(key, value);
+                iterator.remove();
             }
         }
 

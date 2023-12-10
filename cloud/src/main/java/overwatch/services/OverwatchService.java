@@ -11,7 +11,7 @@ import java.util.HashMap;
 @Service
 public class OverwatchService {
     private HashMap<Integer, ConfigurableApplicationContext> servers = new HashMap<>();
-    private int lastPort = 8081;
+    private Integer lastPort = 8081;
 
     private ConsistentHashing consistentHashing;
 
@@ -55,15 +55,7 @@ public class OverwatchService {
         return new HashMap<Integer, ConfigurableApplicationContext>(servers);
     }
 
-    public int getLastPort() {
+    public Integer getLastPort() {
         return lastPort;
-    }
-
-    public void setLastPort(Integer port) {
-        this.lastPort = port;
-    }
-
-    public ConfigurableApplicationContext getServer(Integer port) {
-        return servers.get(port);
     }
 }
