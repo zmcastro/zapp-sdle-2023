@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -159,6 +160,8 @@ public class DBHandler {
 
                 System.out.println(allLists);
 
+                Files.createDirectories(Paths.get(folderPath));
+
                 for (String l: allLists){
 
                     if (this.getAdjacentNodes(node).contains(consistentHashing.getNode(l))){ // need to reallocate
@@ -176,11 +179,11 @@ public class DBHandler {
                             }
                         });
 
-                        this.storeFile(node, l, fileContent[0]); // store in correct nodes
+                        this.storeFile(consistentHashing.getNode(l), l, fileContent[0]); // store in correct nodes
                     }
                 }
 
-                Files.createDirectories(Paths.get(folderPath));
+
 
             } catch (Exception e) {
                 throw e;
@@ -192,13 +195,79 @@ public class DBHandler {
     }
     public void removeNode(String node) throws IOException {
         NodesWriteLock.writeLock().lock();
+        if (listNodes().size() <= 3){
+            NodesWriteLock.writeLock().unlock();
+            throw new RemoteException("Minimum number of database nodes");
+        }
+        List<String> adjacent = this.getAdjacentNodes(node);
         this.consistentHashing.removeNode(node);
         try {
             String folderPath = JSON_DIRECTORY + node;
 
             try {
-                // Remove the directory
-                Files.deleteIfExists(Paths.get(folderPath));
+                Set<String> allLists = new TreeSet<String>();
+                Files.walkFileTree(Paths.get(JSON_DIRECTORY), new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        // Get the file name without extension
+                        String fileNameWithoutExtension = file.getFileName().toString().replaceFirst("[.][^.]+$", "");
+                        if (!fileNameWithoutExtension.equals("DBHandler")){
+                            allLists.add(fileNameWithoutExtension);
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+
+                System.out.println(allLists);
+
+                // delete the folder
+                Files.walkFileTree(Paths.get(folderPath), new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                        // Handle the error accordingly
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+
+                for (String l: allLists){
+                    if (adjacent.contains(consistentHashing.getNode(l))){ // need to reallocate
+                        final String[] fileContent = {null};
+                        // delete previously stored
+                        Files.walkFileTree(Paths.get(JSON_DIRECTORY), new SimpleFileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                String fileNameWithoutExtension = file.getFileName().toString().replaceFirst("[.][^.]+$", "");
+                                if (fileNameWithoutExtension.equals(l) && file.toString().endsWith(".json")) {
+                                    fileContent[0] = new String(Files.readAllBytes(file));
+                                    Files.delete(file);
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+
+                        this.storeFile(this.consistentHashing.getNode(l), l, fileContent[0]); // store in correct nodes
+                    }
+                }
+
+
+
             } catch (Exception e) {
                 throw e;
             }
