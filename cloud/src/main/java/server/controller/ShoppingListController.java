@@ -33,7 +33,7 @@ public class ShoppingListController {
     @GetMapping("/{id}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<String> getShoppingList(@PathVariable String id) {
-        String node = consistentHashing.getNode(String.valueOf(id));
+        String node = consistentHashing.getNode(id);
         try {
             String data = dbHandler.getFile(node, id);
             return ResponseEntity.ok(data);
@@ -53,12 +53,7 @@ public class ShoppingListController {
         try {
             storedShoppingList = dbHandler.getFile(node, id);
         } catch (Exception e) {
-            try {
-                dbHandler.storeFile(node, id, jsonData);
-                return ResponseEntity.ok("Shopping List with ID " + id + " stored successfully");
-            } catch (Exception e1) {
-                return ResponseEntity.status(500).body("Error storing Shopping List with ID: " + id);
-            }
+            return ResponseEntity.status(500).body("Error updating Shopping List with ID: " + id);
         }
 
         ShoppingList oldShoppingList = new ShoppingList(id, "old"); // id and name will be replaced
@@ -75,7 +70,43 @@ public class ShoppingListController {
             dbHandler.storeFile(node, id, mergedList);
             return ResponseEntity.ok("Shopping List with ID " + id + " stored successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error storing Shopping List with ID: " + id);
+            return ResponseEntity.status(500).body("Error updating Shopping List with ID: " + id);
+        }
+    }
+
+    @PostMapping("/{id}")
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<String> createShoppingList(@PathVariable String id, @RequestBody String jsonData){
+        String node = consistentHashing.getNode(id);
+
+        String storedShoppingList;
+
+        try {
+            storedShoppingList = dbHandler.getFile(node, id);
+        } catch (Exception e) {
+            try {
+                dbHandler.storeFile(node, id, jsonData);
+                return ResponseEntity.ok("Shopping List with ID " + id + " stored successfully");
+            } catch (Exception e1) {
+                return ResponseEntity.status(500).body("Error creating Shopping List with ID: " + id);
+            }
+        }
+
+        return ResponseEntity.status(500).body("There is already a Shopping List with ID: " + id);
+
+
+    }
+
+    @DeleteMapping("/{id}")
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<String> deleteShoppingList(@PathVariable String id){
+        String node = consistentHashing.getNode(id);
+        try {
+            dbHandler.deleteFile(node, id);
+            return ResponseEntity.ok("Shopping List with ID " + id + " deleted successfully");
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body("Error deleting Shopping List with ID: " + id);
         }
     }
 

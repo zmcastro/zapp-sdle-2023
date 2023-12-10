@@ -56,6 +56,26 @@ public class DBHandler {
         }
     }
 
+    public void deleteFile(String node, String id) throws IOException {
+        List<String> nodes = getAdjacentNodes(node);
+        String filePath;
+
+
+        readWriteLock.writeLock().lock();
+
+        try {
+            for (String n : nodes) {
+                filePath = JSON_DIRECTORY + n + "/" + id + ".json";
+                Files.delete(Paths.get(filePath));
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
+
+    }
+
     public void storeFile(String node, String id, String jsonData) throws IOException {
         List<String> nodes = getAdjacentNodes(node);
         String filePath;
