@@ -1,5 +1,7 @@
 package overwatch.services;
 
+import ConsistentHashing.ConsistentHashing;
+import database.DBHandler;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import server.Server;
@@ -11,9 +13,27 @@ public class OverwatchService {
     private HashMap<Integer, ConfigurableApplicationContext> servers = new HashMap<>();
     private int lastPort = 8081;
 
+    private ConsistentHashing consistentHashing;
+
+    private DBHandler dbHandler;
+
+    public OverwatchService(){
+        consistentHashing = new ConsistentHashing(5);
+        dbHandler = new DBHandler(consistentHashing);
+
+        // Initialization code for shared instances
+        consistentHashing.addNode("db_1");
+        consistentHashing.addNode("db_2");
+        consistentHashing.addNode("db_3");
+        consistentHashing.addNode("db_4");
+        consistentHashing.addNode("db_5");
+    }
+
     public void addServer() {
         Server s = new Server();
         s.setPort(lastPort);
+        s.setConsistentHashing(consistentHashing);
+        s.setDBHandler(dbHandler);
         ConfigurableApplicationContext context = s.run();
         System.out.println("After run");
 
