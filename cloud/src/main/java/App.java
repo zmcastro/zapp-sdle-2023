@@ -1,3 +1,5 @@
+import database.DBHandler;
+import ConsistentHashing.ConsistentHashing;
 import org.springframework.context.ConfigurableApplicationContext;
 import server.Server;
 
@@ -16,9 +18,21 @@ public class App {
             System.out.println("No arguments provided. Using default server count.");
         }
 
+        ConsistentHashing consistentHashing = new ConsistentHashing(5);
+        DBHandler dbHandler = new DBHandler(consistentHashing);
+
+        // Initialization code for shared instances
+        consistentHashing.addNode("db_1");
+        consistentHashing.addNode("db_2");
+        consistentHashing.addNode("db_3");
+        consistentHashing.addNode("db_4");
+        consistentHashing.addNode("db_5");
+
         for (int i = 0; i < nServers; i++) {
             Server s = new Server();
             s.setPort(8080 + i);
+            s.setConsistentHashing(consistentHashing);
+            s.setDBHandler(dbHandler);
             ConfigurableApplicationContext context = s.run();
             System.out.println("After run");
             servers.add(context);
