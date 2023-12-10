@@ -1,12 +1,14 @@
 package database;
 
+import ConsistentHashing.ConsistentHashing;
+
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -14,9 +16,16 @@ public class DBHandler {
 
     private static final String JSON_DIRECTORY = "src/main/java/database/";
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final ReadWriteLock NodesWriteLock = new ReentrantReadWriteLock();
+
+    private ConsistentHashing consistentHashing;
+
+    public DBHandler(ConsistentHashing consistentHashing){
+        this.consistentHashing = consistentHashing;
+    }
 
     public String getFile(String node, String id) throws IOException {
-        List<String> nodes = getNodes(node);
+        List<String> nodes = getAdjacentNodes(node);
         String filePath;
 
         Exception lastException = null;
@@ -47,7 +56,7 @@ public class DBHandler {
     }
 
     public void storeFile(String node, String id, String jsonData) throws IOException {
-        List<String> nodes = getNodes(node);
+        List<String> nodes = getAdjacentNodes(node);
         String filePath;
 
         readWriteLock.writeLock().lock();
@@ -64,8 +73,8 @@ public class DBHandler {
         }
     }
 
-    public List<String> getNodes(String node){
-        List<String> nodes = new ArrayList<>(Arrays.asList("db_1", "db_2", "db_3", "db_4", "db_5")); // update this when adding/removing nodes
+    public List<String> getAdjacentNodes(String node){
+        List<String> nodes = this.listNodes();
         if (!nodes.contains(node)){
             return new ArrayList<>();
         }
@@ -76,5 +85,125 @@ public class DBHandler {
             return new ArrayList<>(Arrays.asList(node, nodes.get(nodes.indexOf(node) - 1), nodes.get(0)));
         }
         return new ArrayList<>(Arrays.asList(node, nodes.get(nodes.indexOf(node) - 1), nodes.get(nodes.indexOf(node) + 1)));
+    }
+
+    public List<String> listNodes() {
+        NodesWriteLock.readLock().lock();
+        try {
+            List<String> folderNames = new ArrayList<>();
+
+            try {
+                File directory = new File(JSON_DIRECTORY);
+
+                // Check if the directory exists
+                if (!directory.exists() || !directory.isDirectory()) {
+                    throw new RuntimeException("Directory does not exist or is not a valid directory.");
+                }
+
+                File[] files = directory.listFiles();
+
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isDirectory()) {
+                            folderNames.add(file.getName());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error listing folders: " + e.getMessage());
+            }
+
+            // Sort the folder names by hash using the md5 function
+            folderNames.sort((folder1, folder2) -> {
+                try {
+                    Long hash1 = this.consistentHashing.md5(folder1);
+                    Long hash2 = this.consistentHashing.md5(folder2);
+                    return hash1.compareTo(hash2);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error calculating MD5 hash: " + e.getMessage());
+                }
+            });
+
+            return folderNames;
+        }
+        finally {
+            NodesWriteLock.readLock().unlock();
+        }
+    }
+
+    public void createNode(String node) throws IOException {
+        NodesWriteLock.writeLock().lock();
+        this.consistentHashing.addNode(node);
+        try {
+            String folderPath = JSON_DIRECTORY + node;
+
+            try {
+                Set<String> allLists = new TreeSet<String>();
+                Files.walkFileTree(Paths.get(JSON_DIRECTORY), new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        // Get the file name without extension
+                        String fileNameWithoutExtension = file.getFileName().toString().replaceFirst("[.][^.]+$", "");
+                        if (!fileNameWithoutExtension.equals("DBHandler")){
+                            allLists.add(fileNameWithoutExtension);
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+
+                System.out.println(allLists);
+
+                for (String l: allLists){
+
+                    if (this.getAdjacentNodes(node).contains(consistentHashing.getNode(l))){ // need to reallocate
+                        final String[] fileContent = {null};
+                        // delete previously stored
+                        Files.walkFileTree(Paths.get(JSON_DIRECTORY), new SimpleFileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                String fileNameWithoutExtension = file.getFileName().toString().replaceFirst("[.][^.]+$", "");
+                                if (fileNameWithoutExtension.equals(l) && file.toString().endsWith(".json")) {
+                                    fileContent[0] = new String(Files.readAllBytes(file));
+                                    Files.delete(file);
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+
+                        this.storeFile(node, l, fileContent[0]); // store in correct nodes
+                    }
+                }
+
+                Files.createDirectories(Paths.get(folderPath));
+
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+        finally {
+            NodesWriteLock.writeLock().unlock();
+        }
+    }
+    public void removeNode(String node) throws IOException {
+        NodesWriteLock.writeLock().lock();
+        this.consistentHashing.removeNode(node);
+        try {
+            String folderPath = JSON_DIRECTORY + node;
+
+            try {
+                // Remove the directory
+                Files.deleteIfExists(Paths.get(folderPath));
+            } catch (Exception e) {
+                throw e;
+            }
+        } finally {
+            NodesWriteLock.writeLock().unlock();
+        }
     }
 }

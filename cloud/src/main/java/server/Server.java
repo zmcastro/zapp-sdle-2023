@@ -17,6 +17,11 @@ public class Server {
 
     public static int port;
 
+    public static ConsistentHashing consistentHashing;
+
+    public static DBHandler dbHandler;
+
+
     @Bean
     public int getPort() {
         return port;
@@ -44,14 +49,22 @@ public class Server {
         return SpringApplication.run(Server.class);
     }
 
+    public void setConsistentHashing(ConsistentHashing consistentHashing) {
+        Server.consistentHashing = consistentHashing;
+    }
+
+    public void setDBHandler(DBHandler dbHandler) {
+        Server.dbHandler = dbHandler;
+    }
+
     @Bean
     public ConsistentHashing consistentHashing() {
-        return new ConsistentHashing(5);
+        return consistentHashing;
     }
 
     @Bean
     public DBHandler dbHandler() {
-        return new DBHandler();
+        return dbHandler;
     }
 
     @Bean
@@ -59,12 +72,7 @@ public class Server {
         return new ApplicationRunner() {
             @Override
             public void run(ApplicationArguments args) throws Exception {
-                // Your initialization code here
-                consistentHashing.addNode("db_1");
-                consistentHashing.addNode("db_2");
-                consistentHashing.addNode("db_3");
-                consistentHashing.addNode("db_4");
-                consistentHashing.addNode("db_5");
+
             }
         };
     }
