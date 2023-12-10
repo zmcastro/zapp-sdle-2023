@@ -41,13 +41,16 @@
 
         // Save to cloud
         try {
-            const res = await fetch(`http://localhost:9999/${shoppinglist.getID()}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
+            const res = await fetch(
+                `http://localhost:9999/${shoppinglist.getID()}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(shoppinglist.toJSON()),
                 },
-                body: JSON.stringify(shoppinglist.toJSON()),
-            });        
+            );
             window.location.href = "/";
         } catch {
             window.location.href = "/";

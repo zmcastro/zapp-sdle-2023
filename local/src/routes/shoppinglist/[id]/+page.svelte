@@ -1,7 +1,7 @@
 <script>
     import { ShoppingList } from "$lib/shoppinglist.js";
     import { Product } from "$lib/product.js";
-    import { set, get } from "idb-keyval";
+    import { set, get, del } from "idb-keyval";
     import { productStore } from "../../../stores.js";
     import { copy } from "svelte-copy";
     export let data;
@@ -64,6 +64,22 @@
         }
     };
 
+    const deleteShoppingList = async () => {
+        // Delete locally
+        del(shoppinglist.getID());
+
+        // Delete from cloud
+        try {
+            const res = await fetch(`http://localhost:9999/${data.id}`, {
+                method: "DELETE",
+            });
+
+            window.location.href = "/";
+        } catch {
+            window.location.href = "/";
+        }
+    };
+
     const showAlert = () => {
         show = true;
         setTimeout(() => {
@@ -75,6 +91,51 @@
 </script>
 
 <div class="grid grid-cols-3 items-center content-center gap-4">
+    <button on:click={() => deleteShoppingList()} class="btn btn-ghost w-fit place-self-end">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24px"
+            height="24px"
+            viewBox="0 0 24 24"
+            fill="none"
+        >
+            <path
+                d="M10 12V17"
+                stroke="#000000"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+            <path
+                d="M14 12V17"
+                stroke="#000000"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+            <path
+                d="M4 7H20"
+                stroke="#000000"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+            <path
+                d="M6 10V18C6 19.6569 7.34315 21 9 21H15C16.6569 21 18 19.6569 18 18V10"
+                stroke="#000000"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+            <path
+                d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
+                stroke="#000000"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+        </svg>
+    </button>
     <h1 class="font-bold text-xl col-start-2 self-center mx-auto">
         {representation.name}
     </h1>
@@ -117,7 +178,9 @@
 
 <div
     role="alert"
-    class="alert alert-success absolute bottom-2 right-2 w-fit {show ? "opacity-100" : "opacity-0"} transition-opacity bg-primary text-white"
+    class="alert alert-success absolute bottom-2 right-2 w-fit {show
+        ? 'opacity-100'
+        : 'opacity-0'} transition-opacity bg-primary text-white"
 >
     <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -162,7 +225,8 @@
                             <button
                                 disabled={product.count == 0}
                                 on:click={() => decProduct(product.name)}
-                                class="btn btn-ghost disabled:bg-inherit">-</button
+                                class="btn btn-ghost disabled:bg-inherit"
+                                >-</button
                             >
                             <span class="font-bold">{product.count}</span>
                             <button
@@ -177,8 +241,22 @@
                     </div>
                 </div>
                 {#if product.count < 0}
-                    <div class="tooltip tooltip-top absolute text-primary -right-9 top-[calc(50%-12px)]" data-tip="It seems there are too many products">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <div
+                        class="tooltip tooltip-top absolute text-primary -right-9 top-[calc(50%-12px)]"
+                        data-tip="It seems there are too many products"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="stroke-current shrink-0 h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                            /></svg
+                        >
                     </div>
                 {/if}
             </div>

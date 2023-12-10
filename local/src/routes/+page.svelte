@@ -1,8 +1,8 @@
 <script>
-export let data;
+    export let data;
 
-let name;
-const shoppingLists = data.sl;
+    let name;
+    const shoppingLists = data.sl;
 </script>
 
 <div class="flex flex-col gap-5">

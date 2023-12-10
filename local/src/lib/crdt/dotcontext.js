@@ -26,7 +26,6 @@ export class DotContext {
         const res = this.#dc;
         return res;
     }
-    
 
     /**
      * Check if key-value pair in causal context (compact or dot cloud)
@@ -135,7 +134,8 @@ export class DotContext {
     }
 
     fromJSON(context) {
-        for (const [key, value] of context.cc) this.#cc.set(key, parseInt(value));
+        for (const [key, value] of context.cc)
+            this.#cc.set(key, parseInt(value));
         for (const dot of context.dc) this.#dc.add(dot);
     }
 
