@@ -25,6 +25,17 @@ public class NodeController {
     public ResponseEntity<String> listDBNodes() {
         try {
             String data = dbHandler.listNodes().toString();
+            System.out.println(consistentHashing.getNode("2"));
+            System.out.println(consistentHashing.getNode("3"));
+            System.out.println(consistentHashing.getNode("4"));
+            System.out.println(consistentHashing.getNode("5"));
+            System.out.println(consistentHashing.getNode("6"));
+            System.out.println(consistentHashing.getNode("7"));
+            System.out.println(consistentHashing.getNode("8"));
+            System.out.println(consistentHashing.getNode("9"));
+            System.out.println(consistentHashing.getNode("10"));
+            System.out.println(consistentHashing.getNode("11"));
+            System.out.println(consistentHashing.getNode("12"));
             return ResponseEntity.ok(data);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Unable to list database nodes");
